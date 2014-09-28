@@ -1,6 +1,7 @@
 *.pyc
 *.json
 *.mat
+*/.DS_Store
 data/*
 
 

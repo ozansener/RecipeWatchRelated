@@ -5,3 +5,9 @@ Projects related to the Recipe Watch project including
 
 
 ### Anticipating the next object
+
+Dependencies:
+-------------
+- numpy
+- scipy
+- pillow (formerly PIL)

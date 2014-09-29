@@ -49,13 +49,13 @@ class Frame:
 		return (self.jpeg_path != None) and (self.mask_path != None)
 
 
-	def load():
+	def load(self):
 		"""
 			loads self.jpen and self.mask
 		"""
-		if not self.is_loaded:
-			self.jpeg = imread(self.jpeg_path)
-			self.masks = imread(self.mask_path)
+		if not self.is_loaded:			
+			self.jpeg = imread(self.jpeg_path) if self.jpeg_path else None
+			self.masks = loadmat(self.mask_path) if self.mask_path else None
 			self.is_loaded = True
 
 

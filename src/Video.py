@@ -4,6 +4,7 @@
 # used to contain all information relevant to a single video
 import os
 import itertools
+import random
 import numpy as np
 from Frame import *
 
@@ -17,6 +18,7 @@ class Video:
 				...
 			frame_000 = video.get_frame(0)
 			frame_xxx = video.get_random_frame()
+			print frame
 	"""
 
 
@@ -53,22 +55,30 @@ class Video:
 
 	def get_frame(self, t):
 		"""
-			returns Frame object occurring at timestep t
+			returns Frame object occurring at timestep t, loaded
 			returns None if t is too large.
 		"""
 		if t > len(self.frames):
 			return None
 		else:
-			return self.frames[t]
+			frame = self.frames[t]
+			frame.load()
+			return frame
+
+
+	def get_random_frame(self):
+		"""
+			returns random Frame object from this video 
+		"""
+		return self.get_frame(random.choice(range(len(self.frames))))
 
 
 	def iter_frames(self):
 		"""
 			iterates over all frames and *loads* them
 		"""
-		for frame in self.frames:
-			frame.load()
-			return frame
+		for t in range(len(self.frames)):
+			return self.get_frame(t)
 
 
 

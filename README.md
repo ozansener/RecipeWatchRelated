@@ -15,3 +15,13 @@ Here are the packages:
 - numpy
 - scipy
 - pillow (formerly PIL)
+
+
+Setup:
+------
+~$: cd RecipeWatchRelated
+~$: source ./configure.sh
+~$: ipython
+In [1]: from RecipeWatchRelated import *
+...
+

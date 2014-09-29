@@ -11,5 +11,4 @@ if __name__ == '__main__':
 	#=====[ Setup ]=====
 	sd = StorageDelegate()
 	video = sd.get_random_video()
-	frame = video.get_random_frame()
 

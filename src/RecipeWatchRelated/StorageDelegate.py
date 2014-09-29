@@ -22,7 +22,7 @@ class StorageDelegate:
 	######################[ --- INTERNALS --- ]#########################################################
 	####################################################################################################
 
-	def __init__ (self, data_dir=os.path.join(os.getcwd(), '../data/cpmc/CPMC')):
+	def __init__ (self, data_dir=os.path.join(os.getcwd(), '../../data/cpmc/CPMC')):
 		self.data_dir = data_dir
 		self.video_dirs = self.get_video_dirs(self.data_dir)
 		self.videos = self.get_videos(self.video_dirs)

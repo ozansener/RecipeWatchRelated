@@ -2,10 +2,12 @@
 # Class: Video
 # ------------
 # used to contain all information relevant to a single video
+# contains the frames data in a pandas dataframe
 import os
 import itertools
 import random
 import numpy as np
+import pandas as pd
 from Frame import *
 
 class Video:
@@ -27,30 +29,99 @@ class Video:
 			sets self.frames to a list of Frame objects, as defined in Frame.py;
 			does not load in any data, however
 		"""
+		#=====[ Get filestructure	]=====
 		self.name = name
-		self.video_dir = video_dir
-		self.data_dir = os.path.join(video_dir, 'data')
-		self.jpeg_dir = os.path.join(self.data_dir, 'JPEGImages')
-		self.mask_dir = os.path.join(self.data_dir, 'Masks')
+		data_dir = os.path.join(video_dir, 'data')
+		self.data_dirs = {
+			'jpeg':{'path':os.path.join(data_dir, 'JPEGImages'), 'ext':'.jpg'},
+			'masks':{'path':os.path.join(data_dir, 'Masks'), 'ext':'.mat'},
+			'cscores':{'path':os.path.join(data_dir, 'ClusterScores'), 'ext':'.pkl'},
+			'cmasks':{'path':os.path.join(data_dir, 'ClusterMasks'), 'ext':'.pkl'},
+			'cids':{'path':os.path.join(data_dir, 'ClusterIds'), 'ext':'.pkl'}
+		}
+		self.ensure_filesystem_structure()
 
-		self.jpeg_paths = sorted([os.path.join(self.jpeg_dir, name) for name in os.listdir(self.jpeg_dir) if name.endswith('.jpg')])
-		self.mask_paths = sorted([os.path.join(self.mask_dir, name) for name in os.listdir(self.mask_dir) if name.endswith('.mat')])
-		self.frames = [Frame(jp, mp) for jp, mp in itertools.izip_longest(self.jpeg_paths, self.mask_paths)]
+		#=====[ Get names/paths	]=====
+		self.frame_names = self.get_frame_names()
+		self.data_paths = self.get_data_paths()
 
+		#=====[ Get frames	]=====
+		self.frames = self.get_frames()
+
+
+	################################################################################
+	####################[ Setup	]###################################################
+	################################################################################
+
+	def ensure_filesystem_structure(self):
+		"""
+			makes sure that all the necessary directories contained in 
+			self.data_dirs exist 
+		"""
+		for datatype, d in self.data_dirs.items():
+			if not os.path.exists(d['path']):
+				os.mkdir(d['path'])
+
+
+	def get_frame_names(self):
+		"""
+			analyzes the jpeg directory to find the frame names
+		"""
+		jd = self.data_dirs['jpeg']['path']
+		jpeg_paths = sorted([os.path.join(jd, name) for name in os.listdir(jd) if name.endswith('.jpg')])
+		return [os.path.split(p)[-1].split('.')[0] for p in jpeg_paths]
+
+
+	def get_data_paths(self):
+		"""
+			sets self.frame_datapaths
+		"""
+		path_list = []
+		for frame_name in self.frame_names:
+			paths = {datatype:os.path.join(d['path'], frame_name + d['ext']) for datatype, d in self.data_dirs.items()}
+			paths['name'] = frame_name
+			path_list.append(paths)
+		self.frame_datapaths = pd.DataFrame(path_list)
+		self.frame_datapaths['clusters_exist'] = self.frame_datapaths['masks'].apply(os.path.exists)
+		self.frame_datapaths['decoupled'] = self.frame_datapaths['cscores'].apply(os.path.exists)
+
+
+	def get_frames(self):
+		"""
+			sets self.frames to a list of Frame objects with associated data 
+		"""
+		self.frames = [Frame(row) for ix, row in self.frame_datapaths.iterrows()] 
+
+
+
+
+
+
+	################################################################################
+	####################[ Frame Data	]###########################################
+	################################################################################
 
 	def get_num_frames(self):
 		"""
 			returns number of frames
 		"""
-		return len(self.frames)
+		return len(self.frame_datapaths)
 
 
-	def get_num_complete_frames(self):
+	def get_num_clustered_frames(self):
 		"""
 			returns number of frames that are complete 
 			(i.e. they have both a 'jpeg' and a 'mask')
 		"""
-		return sum([f.is_complete() for f in self.frames])
+		return sum(self.frame_datapaths['clusters_exist'])
+
+
+	def get_num_decoupled_frames(self):
+		"""
+			returns the number of frames that are 'decoupled' (i.e. masks and clusters)
+			reside in separate files 
+		"""
+		return sum(self.frame_datapaths['decoupled'])
 
 
 	def get_frame(self, t):
@@ -71,7 +142,7 @@ class Video:
 			returns random Frame object from this video, with the 
 			requirement that it's 'complete'
 		"""
-		return self.get_frame(random.choice(range(self.get_num_complete_frames())))
+		return self.get_frame(random.choice(range(self.get_num_clustered_frames())))
 
 
 	def iter_frames(self):
@@ -82,6 +153,14 @@ class Video:
 			return self.get_frame(t)
 
 
+
+
+
+
+
+	################################################################################
+	####################[ Interface 	]###########################################
+	################################################################################
 
 	def __str__(self):
 		"""

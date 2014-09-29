@@ -8,6 +8,10 @@ Projects related to the Recipe Watch project including
 
 Dependencies:
 -------------
+Note: easiest way to satisfy these dependencies is through installing Anaconda. This will contain python,
+ipython and everything else you will need.
+
+Here are the packages:
 - numpy
 - scipy
 - pillow (formerly PIL)

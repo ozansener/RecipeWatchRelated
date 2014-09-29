@@ -70,13 +70,13 @@ class StorageDelegate:
 
 
 
-
-
-
 if __name__ == '__main__':
 
 	sd = StorageDelegate()
 	video = sd.get_random_video()
+	print video
+	
+
 
 
 

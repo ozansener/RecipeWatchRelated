@@ -59,12 +59,30 @@ class Frame:
 			self.is_loaded = True
 
 
+	def get_mask(self, mask_id):
+		"""
+			returns the mask_id-th mask
+		"""
+		return self.masks['masks'][:,:,mask_id]
+
+
+	def apply_mask(self, jpeg, mask):
+		"""
+			multiplies the mask into the jpeg 
+		"""
+		masked = jpeg.copy()
+		masked[(mask == 0)] = 0
+		return masked
+
+
 	def visualize_mask(self, mask_id):
 		"""
 			returns a numpy array with the ith mask
 			applied 
 		"""
-		raise NotImplementedError
+		if not self.is_loaded:
+			self.load()
+		return self.apply_mask(self.jpeg, self.get_mask(mask_id))
 
 
 	def visualize_masks(self):

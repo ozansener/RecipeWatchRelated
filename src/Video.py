@@ -68,9 +68,10 @@ class Video:
 
 	def get_random_frame(self):
 		"""
-			returns random Frame object from this video 
+			returns random Frame object from this video, with the 
+			requirement that it's 'complete'
 		"""
-		return self.get_frame(random.choice(range(len(self.frames))))
+		return self.get_frame(random.choice(range(self.get_num_complete_frames())))
 
 
 	def iter_frames(self):

@@ -90,7 +90,7 @@ class Video:
 		"""
 			sets self.frames to a list of Frame objects with associated data 
 		"""
-		self.frames = [Frame(row) for ix, row in self.frame_datapaths.iterrows()] 
+		return [Frame(row) for ix, row in self.frame_datapaths.iterrows()] 
 
 
 
@@ -169,8 +169,8 @@ class Video:
 		return """
 =====[ Video: %s ]=====
 # Frames: %d
-# Complete Frames: %d
-""" % (self.name, self.get_num_frames(), self.get_num_complete_frames())
+# Frames with Clusters Marked: %d
+""" % (self.name, self.get_num_frames(), self.get_num_clustered_frames())
 
 
 

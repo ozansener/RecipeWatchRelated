@@ -26,56 +26,36 @@ class Frame:
 			the frame
 		"""
 		self.paths = dict(path_row)
+		self.load_funcs = 	{	
+								'jpeg':imread,
+								'masks':loadmat
+							}
 		self.loaded = {k:False for k in self.paths.keys()}
+		self.data = {k:None for k in self.paths.keys()}
 
 
 	################################################################################
 	####################[ Loading 	]###############################################
 	################################################################################
 
-	def load_jpeg(self):
+	def load_datatype(self, datatype):
 		"""
-			loads the jpeg portion 
+			loads the specified datatype 
 		"""
-		if not self.loaded['jpeg']:
-			self.jpeg = imread(self.jpeg_path) if self.jpeg_path else None
-			self.loaded['jpeg'] = True
-
-	def load_mask(self):
-		"""
-			loads the jpeg portion 
-		"""
-		if not self.loaded['mask']:
-			self.mask = imread(self.mask_path) if self.mask_path else None
-			self.loaded['mask'] = True
-
-	def load_pkl(self, datatype):
-		"""
-			loads any of the pickled datatypes
-		"""
-		if not self.loaded['datatype']:
-			self.loaded['datatype'] = True
-			return pickle.load(open(self.paths['cscores'], 'r'))
-
-	def load_cscores(self):
-		self.cscores = self.load_pkl('cscores')
-
-	def load_cmasks(self):
-		self.cmasks = self.load_pkl('cmasks')
-
-	def load_cids(self):
-		self.cids =  self.load_pkl('cids')				
+		if not self.loaded[datatype]:
+			self.data[datatype] = self.load_funcs[datatype](self.paths[datatype])
+			self.loaded[datatype] = True	
 
 
 	def load(self):
 		"""
 			loads all associated data
 		"""
-		self.load_mask()
-		self.load_pkl()
-		self.load_cscores()
-		self.load_cmasks()
-		self.load_cids()
+		self.load_datatype('jpeg')
+		self.load_datatype('masks')
+		# self.load_cscores()
+		# self.load_cmasks()
+		# self.load_cids()
 
 
 
@@ -90,7 +70,7 @@ class Frame:
 		"""
 			returns the mask_id-th mask
 		"""
-		return self.masks['masks'][:,:,mask_id]
+		return self.data['masks']['masks'][:,:,mask_id]
 
 
 	def apply_mask(self, jpeg, mask):
@@ -102,14 +82,24 @@ class Frame:
 		return masked
 
 
+	def visualize_raw(self):
+		"""
+			returns a numpy array with no masks 
+			applied 
+		"""
+		if not self.loaded['jpeg']:
+			self.load_datatype['jpeg']
+		return self.data['jpeg']
+
+
 	def visualize_mask(self, mask_id):
 		"""
 			returns a numpy array with the ith mask
 			applied 
 		"""
-		if not self.is_loaded:
+		if not self.loaded['jpeg'] and self.loaded['masks']:
 			self.load()
-		return self.apply_mask(self.jpeg, self.get_mask(mask_id))
+		return self.apply_mask(self.data['jpeg'], self.get_mask(mask_id))
 
 
 	def visualize_masks(self):

@@ -53,9 +53,6 @@ class Frame:
 		"""
 		self.load_datatype('jpeg')
 		self.load_datatype('masks')
-		# self.load_cscores()
-		# self.load_cmasks()
-		# self.load_cids()
 
 
 

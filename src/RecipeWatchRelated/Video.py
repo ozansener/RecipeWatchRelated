@@ -29,6 +29,8 @@ class Video:
 			sets self.frames to a list of Frame objects, as defined in Frame.py;
 			does not load in any data, however
 		"""
+		print self.name 
+		print self.video_dir
 		#=====[ Get filestructure	]=====
 		self.name = name
 		data_dir = os.path.join(video_dir, 'data')
@@ -82,6 +84,7 @@ class Video:
 			paths['name'] = frame_name
 			path_list.append(paths)
 		self.frame_datapaths = pd.DataFrame(path_list)
+		print self.frame_datapaths.columns
 		self.frame_datapaths['clusters_exist'] = self.frame_datapaths['masks'].apply(os.path.exists)
 		self.frame_datapaths['decoupled'] = self.frame_datapaths['cscores'].apply(os.path.exists)
 

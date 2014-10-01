@@ -11,7 +11,6 @@ from pprint import pprint
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
-get_ipython().magic(u'pylab inline')
 
 from RecipeWatchRelated import *
 

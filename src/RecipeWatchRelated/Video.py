@@ -29,9 +29,9 @@ class Video:
 			sets self.frames to a list of Frame objects, as defined in Frame.py;
 			does not load in any data, however
 		"""
-		print self.name 
-		print self.video_dir
 		#=====[ Get filestructure	]=====
+		print "---[ creating video: ]---"
+		print name, video_dir
 		self.name = name
 		data_dir = os.path.join(video_dir, 'data')
 		self.data_dirs = {
@@ -70,6 +70,7 @@ class Video:
 			analyzes the jpeg directory to find the frame names
 		"""
 		jd = self.data_dirs['jpeg']['path']
+		print jd
 		jpeg_paths = sorted([os.path.join(jd, name) for name in os.listdir(jd) if name.endswith('.jpg')])
 		return [os.path.split(p)[-1].split('.')[0] for p in jpeg_paths]
 

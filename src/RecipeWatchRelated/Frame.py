@@ -8,6 +8,7 @@ import os
 import numpy as np
 import scipy as sp
 from scipy.ndimage import imread
+from scipy.io import loadmat
 
 class Frame:
 	"""
@@ -24,8 +25,8 @@ class Frame:
 	data_types = ['image', 'masks', 'scores']
 	load_funcs = {
 					'image':lambda path: imread(path) if path else None,
-					'masks':lambda path: np.load(path) if path else None,
-					'scores':lambda path: np.load(path) if path else None
+					'masks':lambda path: loadmat(path, variable_names=['masks'])['masks'] if path else None,
+					'scores':lambda path: loadmat(path, variable_names=['scores'])['scores'] if path else None
 				}
 
 
@@ -36,8 +37,8 @@ class Frame:
 		self.index = frame_dict['_id']
 		self.paths = {	
 						'image':frame_dict['image_path'], 
-						'masks':frame_dict['masks_path'],
-						'scores':frame_dict['scores_path']
+						'masks':frame_dict['masks_and_scores_path'],
+						'scores':frame_dict['masks_and_scores_path']
 					}
 		self.loaded = {k:False for k in self.data_types}
 		self.data = {k:None for k in self.data_types}
@@ -82,7 +83,7 @@ class Frame:
 		"""
 			multiplies the mask into the image 
 		"""
-		masked = image.copy()
+		masked = self.data['image'].copy()
 		masked[(mask == 0)] = 0
 		return masked
 
@@ -102,7 +103,7 @@ class Frame:
 			returns a numpy array with the ith mask
 			applied 
 		"""
-		if not self.loaded['image'] and self.loaded['masks']:
+		if not self.loaded['image'] and not self.loaded['masks']:
 			self.load()
 		return self.apply_mask(self.data['image'], self.get_mask(mask_id))
 

@@ -12,4 +12,6 @@ if __name__ == '__main__':
 	sd = StorageDelegate()
 	video = sd.get_random_video()
 	frame = video.get_random_frame()
+	plt.imshow(frame.visualize_mask(1))
+	plt.show()
 

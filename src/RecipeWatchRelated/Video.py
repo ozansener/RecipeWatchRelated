@@ -45,7 +45,7 @@ class Video:
 		df['_id'] = df['_id'].astype(int)
 		df.index = df['_id']
 		df.sort(inplace=True)
-		df['processed'] = (df['masks_path'].notnull() & df['scores_path'].notnull())
+		df['processed'] = df['masks_and_scores_path'].notnull()
 		return df
 
 
@@ -85,7 +85,8 @@ class Video:
 			returns random Frame object from this video, with the 
 			requirement that it's 'processed'
 		"""
-		return self.get_frame(random.choice(self.frames_df['_id']))
+		processed_df = self.frames_df[self.frames_df['processed']]
+		return self.get_frame(random.choice(processed_df['_id']))
 
 
 	def iter_frames(self):

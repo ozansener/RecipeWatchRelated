@@ -64,9 +64,24 @@ import os
 import shutil
 import sys
 import argparse
+from pprint import pprint
 
 def listdir_fullpath(d):
     return [os.path.join(d, f) for f in os.listdir(d)]
+
+
+def make_video_dir(videos_dir, video_name):
+	"""
+		given a path, makes a video directory there in the following structure:
+		video_name/
+			frames/
+		returns path to that video dir
+	"""
+	video_dir = os.path.join(videos_dir, video_name)
+	if not os.path.isdir(video_dir):
+		os.mkdir(video_dir)
+	os.mkdir(os.path.join(video_dir, 'frames'))
+	return video_dir
 
 
 def setup_output_dir(output_dir, video_names):
@@ -84,10 +99,8 @@ def setup_output_dir(output_dir, video_names):
 	#=====[ Step 2: make individual video dirs	]=====
 	output_video_dirs = {}
 	for video_name in video_names:
-		output_dir = os.path.join(videos_dir, video_name)
-		os.mkdir(output_dir)
-		output_video_dirs[video_name] = output_dir
-
+		video_dir = make_video_dir(videos_dir, video_name)
+		output_video_dirs[video_name] = video_dir
 	return output_video_dirs
 
 
@@ -129,10 +142,13 @@ if __name__ == '__main__':
 		video_dirs[video_name]['output'] = output_video_dirs[video_name]
 
 
-	#=====[ Step 2: for each frame, transfer over the information	]=====
-	for name, dirs in video_dirs.iteritems():
+	pprint(video_dirs)
 
-		
+	#=====[ Step 2: for each frame, transfer over the information	]=====
+	for name, path in video_dirs.iteritems():
+
+		#####[ Make a 	]#####
+		pass
 
 
 

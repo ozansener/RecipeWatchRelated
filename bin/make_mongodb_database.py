@@ -59,6 +59,8 @@ if __name__ == '__main__':
 
 	#=====[ Setup MongoDB	]=====
 	client = MongoClient()
+	if 'RecipeWatchDB' in client.database_names:
+		client.drop_database('RecipeWatchDB')
 	db = client.RecipeWatchDB
 	videos = db.videos
 
@@ -69,16 +71,20 @@ if __name__ == '__main__':
 		video['root_dir'] = os.path.join(input_dir, video_name)
 		video['frames_dir'] = os.path.join(input_dir, video_name, 'frames')
 		video['frames'] = []
-		pprint(video)
 		for frame_name in sorted(os.listdir(video['frames_dir'])):
 			frame_dir = os.path.join(video['frames_dir'], frame_name)
 			image_path = os.path.join(frame_dir, 'image.jpg')
 			masks_path = os.path.join(frame_dir, 'masks.npy')
+			if not os.path.exists(masks_path):
+				masks_path = None
 			scores_path = os.path.join(frame_dir, 'scores.npy')
+			if not os.path.exists(scores_path):
+				scores_path = None
+
 			scores = np.load(open(scores_path, 'r'))
 			frame = {'root_dir':frame_dir, 'image_path':image_path, 'masks_path':masks_path, 'scores':scores, 'name':frame_name, '_id':frame_name}
-			pprint(frame)
 			video['frames'].append(frame)
+		print '---> Inserting video: %s' % video_name
 		db.videos.insert(video)
 
 

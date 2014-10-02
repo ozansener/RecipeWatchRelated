@@ -15,6 +15,7 @@ Here are the packages:
 - numpy
 - scipy
 - pillow (formerly PIL)
+- pymongo
 
 
 Setup:

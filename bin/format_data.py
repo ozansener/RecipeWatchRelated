@@ -104,8 +104,19 @@ def setup_output_dir(output_dir, video_names):
 	return output_video_dirs
 
 
-
-
+def get_video_dirs(video_names):
+	"""
+		given the video names, this will format the output directory and 
+		return a dict mapping video name to a dict containing input path 
+		and output path 
+	"""
+	input_video_dirs = {video_name:os.path.join(input_dir, video_name, 'data') for video_name in video_names}
+	output_video_dirs = setup_output_dir(output_dir, video_names)
+	video_dirs = {video_name:{} for video_name in video_names}
+	for video_name in video_names:
+		video_dirs[video_name]['input'] = input_video_dirs[video_name]
+		video_dirs[video_name]['output'] = output_video_dirs[video_name]
+	return video_dirs
 
 
 
@@ -134,21 +145,13 @@ if __name__ == '__main__':
 			video_dirs: video_names -> (input_dir, output_dir)
 	"""
 	video_names = os.listdir(input_dir)
-	input_video_dirs = {video_name:os.path.join(input_dir, video_name, 'data') for video_name in video_names}
-	output_video_dirs = setup_output_dir(output_dir, video_names)
-	video_dirs = {video_name:{} for video_name in video_names}
-	for video_name in video_names:
-		video_dirs[video_name]['input'] = input_video_dirs[video_name]
-		video_dirs[video_name]['output'] = output_video_dirs[video_name]
-
-
+	video_dirs = get_video_dirs(video_names)
 	pprint(video_dirs)
 
 	#=====[ Step 2: for each frame, transfer over the information	]=====
-	for name, path in video_dirs.iteritems():
-
-		#####[ Make a 	]#####
+	for name, paths in video_dirs.iteritems():
 		pass
+
 
 
 

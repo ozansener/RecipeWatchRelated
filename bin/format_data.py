@@ -39,19 +39,19 @@ Description:
 Usage: 
 ------
 
-	python format_data.py -s [src_directory] -d [dest_directory]
+	python format_data.py -i [input_directory] -o [output_directory]
 
 	i.e.
 
-	python format_data.py 	-s ~/data/robobrain/recipewatch/raw_data \
-							-d ~/data/robobrain/recipewatch/data
+	python format_data.py 	-i ~/data/robobrain/recipewatch/raw_data \
+							-o ~/data/robobrain/recipewatch/data
 
 
 Args:
 -----
 
-	-s (--source): path to source data directory on local filesystem
-	-d (--dest): path to output directory on local filesystem
+	-i (--input_dir): path to source data directory on local filesystem
+	-o (--output_dir): path to output directory on local filesystem
 
 
 ##############
@@ -61,28 +61,85 @@ jhack@stanford.edu
 ##############
 '''
 import os
+import shutil
 import sys
 import argparse
+
+def listdir_fullpath(d):
+    return [os.path.join(d, f) for f in os.listdir(d)]
+
+
+def setup_output_dir(output_dir, video_names):
+	"""
+		sets up the output directory to have one directory 
+		for each video; returns a dict mapping video name -> video dir 
+		path 
+	"""
+	#=====[ Step 1: make a clean 'video' folder]=====
+	videos_dir = os.path.join(output_dir, 'videos')
+	if os.path.exists(videos_dir):
+		shutil.rmtree(videos_dir)
+	os.mkdir(videos_dir)
+
+	#=====[ Step 2: make individual video dirs	]=====
+	output_video_dirs = {}
+	for video_name in video_names:
+		output_dir = os.path.join(videos_dir, video_name)
+		os.mkdir(output_dir)
+		output_video_dirs[video_name] = output_dir
+
+	return output_video_dirs
+
+
+
+
+
 
 
 if __name__ == '__main__':
 
 	#==========[ ARGPARSING	]==========
 	parser = argparse.ArgumentParser(description="Parse format_data.py arguments")
-	parser.add_argument(	'-p', '--profile_type', 
-							metavar='P', type=str, nargs=1, dest='dataset', required=True,
-							help='type of social media profiles to be convered. Currently "linkedin" or "quora"')
 	parser.add_argument(	'-i', '--input_dir',
 							metavar='I', type=str, nargs=1, dest='input_dir', required=True,
-							help='path to source data (local filesystem)')
+							help='path to source data (local filesystem)', 
+							action='store')
 	parser.add_argument(	'-o', '--output_dir',
 							metavar='O', type=str, nargs=1, dest='output_dir', required=True,
-							help='path to output directory (local filesystem)') 
+							help='path to output directory (local filesystem)', 
+							action='store')
 	args = parser.parse_args ()
+	input_dir,output_dir = args.input_dir[0], args.output_dir[0]
+	if not os.path.exists(input_dir) and os.path.exists(output_dir):
+		raise Exception("make sure that input and output directories are actual paths")
+	input_dir = os.path.join(input_dir, 'CPMC')
 
 
-	#=====[ Deal with Source Directory	]=====
-	print args
+	#=====[ Step 1: get video_dirs ]=====
+	"""
+		video_dirs is a dict as follows:
+			video_dirs: video_names -> (input_dir, output_dir)
+	"""
+	video_names = os.listdir(input_dir)
+	input_video_dirs = {video_name:os.path.join(input_dir, video_name, 'data') for video_name in video_names}
+	output_video_dirs = setup_output_dir(output_dir, video_names)
+	video_dirs = {video_name:{} for video_name in video_names}
+	for video_name in video_names:
+		video_dirs[video_name]['input'] = input_video_dirs[video_name]
+		video_dirs[video_name]['output'] = output_video_dirs[video_name]
+
+
+	#=====[ Step 2: for each frame, transfer over the information	]=====
+	for name, dirs in video_dirs.iteritems():
+
+		
+
+
+
+
+
+
+
 
 
 

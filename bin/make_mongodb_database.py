@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
 	#=====[ Insert Videos ]===
 	for video_name in [v for v in os.listdir(input_dir) if not v.startswith('.')]:
-		video = {'name':video_name}
+		video = {'name':video_name, '_id':video_name}
 		video['root_dir'] = os.path.join(input_dir, video_name)
 		video['frames_dir'] = os.path.join(input_dir, video_name, 'frames')
 		video['frames'] = []
@@ -76,10 +76,10 @@ if __name__ == '__main__':
 			masks_path = os.path.join(frame_dir, 'masks.npy')
 			scores_path = os.path.join(frame_dir, 'scores.npy')
 			scores = np.load(open(scores_path, 'r'))
-			frame = {'root_dir':frame_dir, 'image_path':image_path, 'masks_path':masks_path, 'scores':scores}
+			frame = {'root_dir':frame_dir, 'image_path':image_path, 'masks_path':masks_path, 'scores':scores, 'name':frame_name, '_id':frame_name}
 			pprint(frame)
 			video['frames'].append(frame)
-		# db.videos.insert(video)
+		db.videos.insert(video)
 
 
 

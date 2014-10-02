@@ -65,10 +65,16 @@ import shutil
 import sys
 import argparse
 from pprint import pprint
+from scipy.io import loadmat
+import numpy as np
 
 def listdir_fullpath(d):
     return [os.path.join(d, f) for f in os.listdir(d)]
 
+
+################################################################################
+####################[ Setup	Input/Output]#######################################
+################################################################################
 
 def make_video_dir(videos_dir, video_name):
 	"""
@@ -120,6 +126,96 @@ def get_video_dirs(video_names):
 
 
 
+
+
+################################################################################
+####################[ Transfer Data ]###########################################
+################################################################################
+
+def get_frame_names(input_dir):
+	"""
+		given a video input dir, returns a list of all frame names,
+		sorted.
+	"""
+	return sorted(os.listdir(os.path.join(input_dir, 'JPEGImages')))
+
+
+def get_frame_index(frame_name):
+	"""
+		returns the frame index from a frame name 
+	"""
+	return frame_name.split(int(name.split('.')[0][-5:]))
+
+
+def make_frame_dir(video_paths, frame_index):
+	"""
+		given a video's directories and a frame index, this will make 
+		a directory for it. returns a path to this frame directory
+	"""
+	frame_dir_path = os.path.join(video_paths, 'frames', frame_index)
+	os.mkdir(frame_dir_path)
+	return frame_dir_path
+
+
+def get_frame_input_paths(video_paths, frame_name):
+	"""
+		given a video's paths and a frame name, this will return 
+		paths to it's "JPEGImages" data and its "masks" data
+	"""
+	jpeg_path = os.path.join(video_paths['input'], 'JPEGImages', frame_name)
+	masks_path = os.path.Join(video_paths['input'], 'Masks', frame_name)
+	return jpeg_path, masks_path
+
+
+def get_frame_output_paths(frame_output_dir):
+	"""
+		given a frame output dir, returns jpeg, masks, scores paths 
+	"""
+	fod = frame_output_dir
+	return os.path.join(fod, 'image.jpg'), os.path.join('masks.npy'), os.path.join('scores.npy')
+
+
+def transfer_frame(frame_name, video, paths):
+	"""
+		given the name of a frame, it's video, and that video's paths,
+		this will transfer the named frame over to the output directory 
+	"""
+	#=====[ Step 1: make the frame directory, get path to it ]=====
+	frame_index = get_frame_index(frame_index)
+	frame_output_dir = make_frame_dir(paths, frame_index)
+
+	#=====[ Step 2: get input/output locations	]=====
+	jpeg_input_path, masks_input_path = get_frame_input_paths(paths, frame_name)
+	jpeg_output_path, masks_output_path, scores_output_path = get_frame_output_paths(frame_output_dir)
+
+	#=====[ Step 3: do the copying	]=====
+	shutil.copy(jpeg_input_path, jpeg_output_path)
+	masks_scores_coupled = loadmat(masks_input_path)
+	masks = masks_scores_coupled['masks']
+	scores = masks_scores_coupled['scores']
+	np.save(open(masks_output_path, 'w'), masks)
+	np.save(open(scores_output_path, 'w'), scores)
+
+
+
+
+
+def transfer_video(name, paths):
+	"""
+		given a video name and its input/output paths contained in the dict 
+		'paths', this will transfer relevant information over
+	"""
+	print '=====[ Transferring Video: %s ]=====' % name
+	input_dir, output_dir = paths['input'], paths['output']
+	frame_names = get_frame_names(input_dir)
+	print 'frame_names: '
+	pprint(frame_names)
+	# for frame_name in frame_names:
+		# transfer_frame(frame_name, name, paths)
+
+
+
+
 if __name__ == '__main__':
 
 	#==========[ ARGPARSING	]==========
@@ -146,11 +242,13 @@ if __name__ == '__main__':
 	"""
 	video_names = os.listdir(input_dir)
 	video_dirs = get_video_dirs(video_names)
+	print '=====[ Video Dirs ]====='
 	pprint(video_dirs)
 
 	#=====[ Step 2: for each frame, transfer over the information	]=====
+	print '#################[ TRANSFERRING VIDEOS ]###################'
 	for name, paths in video_dirs.iteritems():
-		pass
+		transfer_video(name, paths)
 
 
 

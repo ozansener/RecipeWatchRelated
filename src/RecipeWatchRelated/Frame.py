@@ -13,17 +13,16 @@ class Frame:
 		Ideal Usage:
 		------------
 
-			f = Frame(jpg_path, mask_path)
+			f = Frame(frame_dict)
 			f.load()
 			plt.imshow(f.visualize_mask(i))
 				...
 			plt.imshow(f.visualize_masks())
 				...
 	"""
-	def __init__(self, path_row):
+	def __init__(self, frame_dict):
 		"""
-			given a pandas series containing paths to data elements, creates 
-			the frame
+			given a frame as represented in frame_dict, this will 
 		"""
 		self.paths = dict(path_row)
 		self.load_funcs = 	{	

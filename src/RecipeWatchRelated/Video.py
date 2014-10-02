@@ -15,7 +15,7 @@ class Video:
 		Ideal Usage:
 		------------
 
-			video = Video('video_1', '//path/to/video/data')
+			video = Video(video_dict)
 			for frame in video.iter_frames():
 				...
 			frame_000 = video.get_frame(0)
@@ -24,80 +24,29 @@ class Video:
 	"""
 
 
-	def __init__(self, name, video_dir):
+	def __init__(self, video_dict):
 		"""
-			sets self.frames to a list of Frame objects, as defined in Frame.py;
-			does not load in any data, however
+			video_dict = a dictionary containing video data, as contained in 
+			mongodb 
 		"""
-		print self.name 
-		print self.video_dir
 		#=====[ Get filestructure	]=====
-		self.name = name
-		data_dir = os.path.join(video_dir, 'data')
-		self.data_dirs = {
-			'jpeg':{'path':os.path.join(data_dir, 'JPEGImages'), 'ext':'.jpg'},
-			'masks':{'path':os.path.join(data_dir, 'Masks'), 'ext':'.mat'},
-			'cscores':{'path':os.path.join(data_dir, 'ClusterScores'), 'ext':'.pkl'},
-			'cmasks':{'path':os.path.join(data_dir, 'ClusterMasks'), 'ext':'.pkl'},
-			'cids':{'path':os.path.join(data_dir, 'ClusterIds'), 'ext':'.pkl'}
-		}
-		self.ensure_filesystem_structure()
-
-		#=====[ Get names/paths	]=====
-		self.frame_names = self.get_frame_names()
-		self.data_paths = self.get_data_paths()
-
-		#=====[ Get frames	]=====
-		self.frames = self.get_frames()
+		self.name = video_dict['name']
+		self.root_dir = video_dict['root_dir']
+		self.frames_dir = video_dict['frames_dir']
+		self.frames_df = self.get_frames_df(video_dict['frames'])
 
 
-	################################################################################
-	####################[ Setup	]###################################################
-	################################################################################
-
-	def ensure_filesystem_structure(self):
+	def get_frames_df(self, frames_list):
 		"""
-			makes sure that all the necessary directories contained in 
-			self.data_dirs exist 
+			returns a dataframe containing sorted frames and paths to their respective 
+			data
 		"""
-		for datatype, d in self.data_dirs.items():
-			if not os.path.exists(d['path']):
-				os.mkdir(d['path'])
-
-
-	def get_frame_names(self):
-		"""
-			analyzes the jpeg directory to find the frame names
-		"""
-		jd = self.data_dirs['jpeg']['path']
-		jpeg_paths = sorted([os.path.join(jd, name) for name in os.listdir(jd) if name.endswith('.jpg')])
-		return [os.path.split(p)[-1].split('.')[0] for p in jpeg_paths]
-
-
-	def get_data_paths(self):
-		"""
-			sets self.frame_datapaths
-		"""
-		path_list = []
-		for frame_name in self.frame_names:
-			paths = {datatype:os.path.join(d['path'], frame_name + d['ext']) for datatype, d in self.data_dirs.items()}
-			paths['name'] = frame_name
-			path_list.append(paths)
-		self.frame_datapaths = pd.DataFrame(path_list)
-		print self.frame_datapaths.columns
-		self.frame_datapaths['clusters_exist'] = self.frame_datapaths['masks'].apply(os.path.exists)
-		self.frame_datapaths['decoupled'] = self.frame_datapaths['cscores'].apply(os.path.exists)
-
-
-	def get_frames(self):
-		"""
-			sets self.frames to a list of Frame objects with associated data 
-		"""
-		return [Frame(row) for ix, row in self.frame_datapaths.iterrows()] 
-
-
-
-
+		df = pd.DataFrame(frames_list)
+		df['_id'] = df['_id'].astype(int)
+		df.index = df['_id']
+		df.sort(inplace=True)
+		df['processed'] = (df['masks_path'].notnull() & df['scores_path'].notnull())
+		return df
 
 
 	################################################################################
@@ -108,23 +57,15 @@ class Video:
 		"""
 			returns number of frames
 		"""
-		return len(self.frame_datapaths)
+		return len(self.frames_df)
 
 
-	def get_num_clustered_frames(self):
+	def get_num_processed_frames(self):
 		"""
 			returns number of frames that are complete 
 			(i.e. they have both a 'jpeg' and a 'mask')
 		"""
-		return sum(self.frame_datapaths['clusters_exist'])
-
-
-	def get_num_decoupled_frames(self):
-		"""
-			returns the number of frames that are 'decoupled' (i.e. masks and clusters)
-			reside in separate files 
-		"""
-		return sum(self.frame_datapaths['decoupled'])
+		return self.frame_df['masks_path'].notnull().sum()
 
 
 	def get_frame(self, t):

@@ -40,14 +40,14 @@ class StorageDelegate:
 		"""
 			returns the named video (unloaded)
 		""" 
-		return self.videos.find_one(spec_or_id=video_name)
+		return Video(self.videos.find_one(spec_or_id=video_name))
 
 
 	def get_random_video(self):
 		"""
 			returns a random video (unloaded)
 		"""
-		return self.videos.find_one()
+		return Video(self.videos.find_one())
 
 
 	

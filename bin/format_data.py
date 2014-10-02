@@ -190,20 +190,19 @@ def transfer_frame(frame_name, video, paths):
 	jpeg_input_path, masks_input_path = get_frame_input_paths(paths, frame_name)
 	jpeg_output_path, masks_output_path, scores_output_path = get_frame_output_paths(frame_output_dir)
 
-	print '	##[ Transferring Frame: %s ]##' % frame_name
-	print '		frame_index: %s' % frame_index 
-	print '		frame_output_dir: %s' % frame_output_dir
-	print '		jpeg_input_path: %s' % jpeg_input_path
-	print '		jpeg_output_path: %s' % jpeg_output_path
-	print '		masks_input_path: %s' % masks_input_path
-	print '		masks_output_path: %s' % masks_output_path	
-	print '		scores_output_path: %s' % scores_output_path
-
+	#####[ DEBUG OUTPUT	]#####
+	# print '	##[ Transferring Frame: %s ]##' % frame_name
+	# print '		frame_index: %s' % frame_index 
+	# print '		frame_output_dir: %s' % frame_output_dir
+	# print '		jpeg_input_path: %s' % jpeg_input_path
+	# print '		jpeg_output_path: %s' % jpeg_output_path
+	# print '		masks_input_path: %s' % masks_input_path
+	# print '		masks_output_path: %s' % masks_output_path	
+	# print '		scores_output_path: %s' % scores_output_path
 
 	#=====[ Step 3: do the copying	]=====
-	# shutil.copy(jpeg_input_path, jpeg_output_path)
+	shutil.copy(jpeg_input_path, jpeg_output_path)
 	masks_scores_coupled = loadmat(open(masks_input_path, 'r'))
-	print '		keys: ', masks_scores_coupled.keys()
 	masks = masks_scores_coupled['masks']
 	scores = masks_scores_coupled['scores']
 	np.save(open(masks_output_path, 'w'), masks)
@@ -219,7 +218,6 @@ def transfer_video(name, paths):
 		given a video name and its input/output paths contained in the dict 
 		'paths', this will transfer relevant information over
 	"""
-	print '=====[ Transferring Video: %s ]=====' % name
 	input_dir, output_dir = paths['input'], paths['output']
 	frame_names = get_frame_names(input_dir)
 	for frame_name in frame_names:
@@ -254,14 +252,12 @@ if __name__ == '__main__':
 	"""
 	video_names = os.listdir(input_dir)
 	video_dirs = get_video_dirs(video_names)
-	print '=====[ Video Dirs ]====='
-	pprint(video_dirs)
 
 	#=====[ Step 2: for each frame, transfer over the information	]=====
-	print '#################[ TRANSFERRING VIDEOS ]###################'
 	for name, paths in video_dirs.iteritems():
+		print '---> Transferring Video: %s...', name
 		transfer_video(name, paths)
-
+		print 'Complete'
 
 
 

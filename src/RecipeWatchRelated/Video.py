@@ -74,7 +74,7 @@ class Video:
 			returns None if t is too large. 
 			Note: t is 1-indexed
 		"""
-		if t > len(self.frames) - 1:
+		if t > len(self.frames_df) - 1:
 			return None
 		else:
 			return Frame(self.frames_df.loc[t])
@@ -85,7 +85,7 @@ class Video:
 			returns random Frame object from this video, with the 
 			requirement that it's 'processed'
 		"""
-		return self.get_frame(random.choice(df['_id']))
+		return self.get_frame(random.choice(self.frames_df['_id']))
 
 
 	def iter_frames(self):

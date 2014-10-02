@@ -4,5 +4,6 @@
 *.mat
 */.DS_Store
 data/*
+bin/data_temp
 
 

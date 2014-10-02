@@ -202,11 +202,12 @@ def transfer_frame(frame_name, video, paths):
 
 	#=====[ Step 3: do the copying	]=====
 	shutil.copy(jpeg_input_path, jpeg_output_path)
-	masks_scores_coupled = loadmat(open(masks_input_path, 'r'))
-	masks = masks_scores_coupled['masks']
-	scores = masks_scores_coupled['scores']
-	np.save(open(masks_output_path, 'w'), masks)
-	np.save(open(scores_output_path, 'w'), scores)
+	if masks_input_path:
+		masks_scores_coupled = loadmat(open(masks_input_path, 'r'))
+		masks = masks_scores_coupled['masks']
+		scores = masks_scores_coupled['scores']
+		np.save(open(masks_output_path, 'w'), masks)
+		np.save(open(scores_output_path, 'w'), scores)
 
 
 

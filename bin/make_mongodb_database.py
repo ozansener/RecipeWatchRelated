@@ -79,7 +79,7 @@ if __name__ == '__main__':
 			frame = {'root_dir':frame_dir, 'image_path':image_path, 'masks_path':masks_path, 'scores':scores, 'name':frame_name, '_id':frame_name}
 			pprint(frame)
 			video['frames'].append(frame)
-		# db.videos.insert(video)
+		db.videos.insert(video)
 
 
 

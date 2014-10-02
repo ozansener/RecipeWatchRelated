@@ -144,7 +144,7 @@ def get_frame_index(frame_name):
 	"""
 		returns the frame index from a frame name 
 	"""
-	return frame_name.split(int(name.split('.')[0][-5:]))
+	return int(frame_name.split('.')[0][-5:])
 
 
 def make_frame_dir(video_paths, frame_index):
@@ -152,7 +152,7 @@ def make_frame_dir(video_paths, frame_index):
 		given a video's directories and a frame index, this will make 
 		a directory for it. returns a path to this frame directory
 	"""
-	frame_dir_path = os.path.join(video_paths, 'frames', frame_index)
+	frame_dir_path = os.path.join(video_paths['output'], 'frames', str(frame_index))
 	os.mkdir(frame_dir_path)
 	return frame_dir_path
 
@@ -163,7 +163,9 @@ def get_frame_input_paths(video_paths, frame_name):
 		paths to it's "JPEGImages" data and its "masks" data
 	"""
 	jpeg_path = os.path.join(video_paths['input'], 'JPEGImages', frame_name)
-	masks_path = os.path.Join(video_paths['input'], 'Masks', frame_name)
+	masks_path = os.path.join(video_paths['input'], 'Masks', frame_name[:-4] + '.mat')
+	if not os.path.exists(masks_path):
+		masks_path = None
 	return jpeg_path, masks_path
 
 
@@ -172,7 +174,7 @@ def get_frame_output_paths(frame_output_dir):
 		given a frame output dir, returns jpeg, masks, scores paths 
 	"""
 	fod = frame_output_dir
-	return os.path.join(fod, 'image.jpg'), os.path.join('masks.npy'), os.path.join('scores.npy')
+	return os.path.join(fod, 'image.jpg'), os.path.join(fod, 'masks.npy'), os.path.join(fod, 'scores.npy')
 
 
 def transfer_frame(frame_name, video, paths):
@@ -181,20 +183,32 @@ def transfer_frame(frame_name, video, paths):
 		this will transfer the named frame over to the output directory 
 	"""
 	#=====[ Step 1: make the frame directory, get path to it ]=====
-	frame_index = get_frame_index(frame_index)
+	frame_index = get_frame_index(frame_name)
 	frame_output_dir = make_frame_dir(paths, frame_index)
 
 	#=====[ Step 2: get input/output locations	]=====
 	jpeg_input_path, masks_input_path = get_frame_input_paths(paths, frame_name)
 	jpeg_output_path, masks_output_path, scores_output_path = get_frame_output_paths(frame_output_dir)
 
+	print '	##[ Transferring Frame: %s ]##' % frame_name
+	print '		frame_index: %s' % frame_index 
+	print '		frame_output_dir: %s' % frame_output_dir
+	print '		jpeg_input_path: %s' % jpeg_input_path
+	print '		jpeg_output_path: %s' % jpeg_output_path
+	print '		masks_input_path: %s' % masks_input_path
+	print '		masks_output_path: %s' % masks_output_path	
+	print '		scores_output_path: %s' % scores_output_path
+
+
 	#=====[ Step 3: do the copying	]=====
-	shutil.copy(jpeg_input_path, jpeg_output_path)
-	masks_scores_coupled = loadmat(masks_input_path)
+	# shutil.copy(jpeg_input_path, jpeg_output_path)
+	masks_scores_coupled = loadmat(open(masks_input_path, 'r'))
+	print '		keys: ', masks_scores_coupled.keys()
 	masks = masks_scores_coupled['masks']
 	scores = masks_scores_coupled['scores']
 	np.save(open(masks_output_path, 'w'), masks)
 	np.save(open(scores_output_path, 'w'), scores)
+
 
 
 
@@ -208,10 +222,8 @@ def transfer_video(name, paths):
 	print '=====[ Transferring Video: %s ]=====' % name
 	input_dir, output_dir = paths['input'], paths['output']
 	frame_names = get_frame_names(input_dir)
-	print 'frame_names: '
-	pprint(frame_names)
-	# for frame_name in frame_names:
-		# transfer_frame(frame_name, name, paths)
+	for frame_name in frame_names:
+		transfer_frame(frame_name, name, paths)
 
 
 

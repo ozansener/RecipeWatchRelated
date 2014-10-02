@@ -69,7 +69,7 @@ from pprint import pprint
 from scipy.io import loadmat
 import numpy as np
 
-from SparseTensor import SparseTensor
+from RecipeWatchRelated.SparseTensor import SparseTensor
 
 def listdir_fullpath(d):
     return [os.path.join(d, f) for f in os.listdir(d)]
@@ -177,7 +177,7 @@ def get_frame_output_paths(frame_output_dir):
 		given a frame output dir, returns jpeg, masks, scores paths 
 	"""
 	fod = frame_output_dir
-	return os.path.join(fod, 'image.jpg'), os.path.join(fod, 'masks.npy'), os.path.join(fod, 'scores.npy')
+	return os.path.join(fod, 'image.jpg'), os.path.join(fod, 'masks.pkl'), os.path.join(fod, 'scores.npy'), os.path.join(fod, 'masks_and_scores.mat')
 
 
 def transfer_frame(frame_name, video, paths):
@@ -191,7 +191,7 @@ def transfer_frame(frame_name, video, paths):
 
 	#=====[ Step 2: get input/output locations	]=====
 	jpeg_input_path, masks_input_path = get_frame_input_paths(paths, frame_name)
-	jpeg_output_path, masks_output_path, scores_output_path = get_frame_output_paths(frame_output_dir)
+	jpeg_output_path, masks_output_path, scores_output_path, coupled_output_path = get_frame_output_paths(frame_output_dir)
 
 	#####[ DEBUG OUTPUT	]#####
 	# print '	##[ Transferring Frame: %s ]##' % frame_name
@@ -206,11 +206,14 @@ def transfer_frame(frame_name, video, paths):
 	#=====[ Step 3: do the copying	]=====
 	shutil.copy(jpeg_input_path, jpeg_output_path)
 	if masks_input_path:
-		masks_scores_coupled = loadmat(open(masks_input_path, 'r'))
-		masks = SparseTensor(masks_scores_coupled['masks'])
-		scores = masks_scores_coupled['scores']
-		np.save(open(masks_output_path, 'w'), masks)
-		pickle.dump(open(scores_output_path, 'w'), scores)
+		shutil.copy(masks_input_path, coupled_output_path)
+
+		######[ IF YOU WANT TO REFORMAT MATRICES - TAKES TIME + SPACE	]#####
+		# masks_scores_coupled = loadmat(open(masks_input_path, 'r'))
+		# masks = masks_scores_coupled['masks']
+		# scores = masks_scores_coupled['scores']
+		# pickle.dump(masks, open(masks_output_path, 'w'))
+		# np.save(open(scores_output_path, 'w'), scores)
 
 
 

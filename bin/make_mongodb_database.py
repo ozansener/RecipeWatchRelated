@@ -74,13 +74,14 @@ if __name__ == '__main__':
 		for frame_name in sorted(os.listdir(video['frames_dir'])):
 			frame_dir = os.path.join(video['frames_dir'], frame_name)
 			image_path = os.path.join(frame_dir, 'image.jpg')
+			masks_and_scores_path = os.path.join(frame_dir, 'masks_and_scores.mat')
 			masks_path = os.path.join(frame_dir, 'masks.npy')
 			if not os.path.exists(masks_path):
 				masks_path = None
 			scores_path = os.path.join(frame_dir, 'scores.npy')
 			if not os.path.exists(scores_path):
 				scores_path = None
-			frame = {'root_dir':frame_dir, 'image_path':image_path, 'masks_path':masks_path, 'scores_path':scores_path, 'name':frame_name, '_id':frame_name}
+			frame = {'root_dir':frame_dir, 'image_path':image_path, 'masks_and_scores_path':masks_and_scores_path, 'name':frame_name, '_id':frame_name}
 			video['frames'].append(frame)
 		print '---> Inserting video: %s' % video_name
 

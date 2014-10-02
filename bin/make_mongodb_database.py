@@ -73,6 +73,7 @@ if __name__ == '__main__':
 		video['frames'] = []
 		for frame_name in sorted(os.listdir(video['frames_dir'])):
 			frame_dir = os.path.join(video['frames_dir'], frame_name)
+			image_path = os.path.join(video['frames_dir'], 'image.jpg')
 			masks_and_scores_path = os.path.join(frame_dir, 'masks_and_scores.mat')
 			if not os.path.exists(masks_and_scores_path):
 				masks_and_scores_path = None

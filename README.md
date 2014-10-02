@@ -22,6 +22,7 @@ Setup:
 ------
 ~$: cd RecipeWatchRelated
 ~$: source ./configure.sh
+~$: mongodb --dbpath=$MONGODB_DBPATH
 ~$: ipython
 In [1]: from RecipeWatchRelated import *
 ...

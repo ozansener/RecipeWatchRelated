@@ -71,32 +71,29 @@ class Video:
 	def get_frame(self, t):
 		"""
 			returns Frame object occurring at timestep t, loaded
-			returns None if t is too large.
+			returns None if t is too large. 
+			Note: t is 1-indexed
 		"""
-		if t > len(self.frames):
+		if t > len(self.frames) - 1:
 			return None
 		else:
-			frame = self.frames[t]
-			frame.load()
-			return frame
+			return Frame(self.frames_df.loc[t])
 
 
 	def get_random_frame(self):
 		"""
 			returns random Frame object from this video, with the 
-			requirement that it's 'complete'
+			requirement that it's 'processed'
 		"""
-		return self.get_frame(random.choice(range(self.get_num_clustered_frames())))
+		return self.get_frame(random.choice(df['_id']))
 
 
 	def iter_frames(self):
 		"""
 			iterates over all frames and *loads* them
 		"""
-		for t in range(len(self.frames)):
-			return self.get_frame(t)
-
-
+		for ix, row in self.frames_df.iterrows():
+			return self.get_frame(ix)
 
 
 
@@ -113,8 +110,8 @@ class Video:
 		return """
 =====[ Video: %s ]=====
 # Frames: %d
-# Frames with Clusters Marked: %d
-""" % (self.name, self.get_num_frames(), self.get_num_clustered_frames())
+# Processed Frames: %d
+""" % (self.name, self.get_num_frames(), self.get_num_processed_frames())
 
 
 

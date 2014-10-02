@@ -64,9 +64,9 @@ if __name__ == '__main__':
 
 
 	#=====[ Insert Videos ]===
-	for video_name in os.listdir(input_dir):
+	for video_name in [v for v in os.listdir(input_dir) if not v.startswith('.')]:
 		video = {'name':video_name}
-		video['root_dir'] = os.path.join(input_dir, video_name)}
+		video['root_dir'] = os.path.join(input_dir, video_name)
 		video['frames_dir'] = os.path.join(input_dir, video_name, 'frames')
 		video['frames'] = []
 		pprint(video)

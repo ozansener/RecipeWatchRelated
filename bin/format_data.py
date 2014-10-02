@@ -220,7 +220,10 @@ def transfer_video(name, paths):
 	"""
 	input_dir, output_dir = paths['input'], paths['output']
 	frame_names = get_frame_names(input_dir)
+	num_frames = len(frame_names)
 	for frame_name in frame_names:
+		frame_index = get_frame_index(frame_name)
+		print '	Transferring Frame: %d/%d' % (frame_index, num_frames)
 		transfer_frame(frame_name, name, paths)
 
 
@@ -255,9 +258,8 @@ if __name__ == '__main__':
 
 	#=====[ Step 2: for each frame, transfer over the information	]=====
 	for name, paths in video_dirs.iteritems():
-		print '---> Transferring Video: %s...', name
+		print '---> Transferring Video: %s...' % name
 		transfer_video(name, paths)
-		print 'Complete'
 
 
 

@@ -94,7 +94,7 @@ class Frame:
 			applied 
 		"""
 		if not self.loaded['image']:
-			self.load_datatype['image']
+			self.load_datatype('image')
 		return self.data['image']
 
 
@@ -103,8 +103,10 @@ class Frame:
 			returns a numpy array with the ith mask
 			applied 
 		"""
-		if not self.loaded['image'] and not self.loaded['masks']:
-			self.load()
+		if not self.loaded['image']:
+			self.load_datatype('image')
+		if not self.loaded['masks']:
+			self.load_datatype('masks')
 		return self.apply_mask(self.data['image'], self.get_mask(mask_id))
 
 

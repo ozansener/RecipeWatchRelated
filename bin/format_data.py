@@ -64,9 +64,12 @@ import os
 import shutil
 import sys
 import argparse
+import pickle
 from pprint import pprint
 from scipy.io import loadmat
 import numpy as np
+
+from SparseTensor import SparseTensor
 
 def listdir_fullpath(d):
     return [os.path.join(d, f) for f in os.listdir(d)]
@@ -204,10 +207,10 @@ def transfer_frame(frame_name, video, paths):
 	shutil.copy(jpeg_input_path, jpeg_output_path)
 	if masks_input_path:
 		masks_scores_coupled = loadmat(open(masks_input_path, 'r'))
-		masks = masks_scores_coupled['masks']
+		masks = SparseTensor(masks_scores_coupled['masks'])
 		scores = masks_scores_coupled['scores']
 		np.save(open(masks_output_path, 'w'), masks)
-		np.save(open(scores_output_path, 'w'), scores)
+		pickle.dump(open(scores_output_path, 'w'), scores)
 
 
 

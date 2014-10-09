@@ -9,6 +9,7 @@ import numpy as np
 import scipy as sp
 from scipy.ndimage import imread
 from scipy.io import loadmat
+from skimage.segmentation import slic
 
 class Frame:
 	"""
@@ -22,11 +23,11 @@ class Frame:
 			plt.imshow(f.visualize_masks())
 				...
 	"""
-	data_types = ['image', 'masks', 'scores']
+	data_types = ['image', 'masks', 'scores', 'segments']
 	load_funcs = {
 					'image':lambda path: imread(path) if path else None,
 					'masks':lambda path: loadmat(path, variable_names=['masks'])['masks'] if path else None,
-					'scores':lambda path: loadmat(path, variable_names=['scores'])['scores'] if path else None
+					'scores':lambda path: loadmat(path, variable_names=['scores'])['scores'] if path else None,
 				}
 
 
@@ -42,6 +43,10 @@ class Frame:
 					}
 		self.loaded = {k:False for k in self.data_types}
 		self.data = {k:None for k in self.data_types}
+
+
+
+
 
 
 	################################################################################
@@ -65,6 +70,13 @@ class Frame:
 			self.load_datatype(datatype)
 
 
+
+	def get_segments(self):
+		"""
+			finds segments 
+		"""
+		# assert self.loaded['image']
+		self.data['segments'] = slic(self.data['image'], n_segments=250, compactness=100)
 
 
 
@@ -115,4 +127,13 @@ class Frame:
 			returns a numpy array with all masks labelled
 		"""
 		raise NotImplementedError
+
+
+	def visualize_segment(self, seg_id):
+		"""
+			visualizes the ith segment 
+		"""
+		img = self.data['image'].copy()
+		img[self.data['segments'] != seg_id] = 0
+		return img
 

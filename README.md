@@ -16,6 +16,7 @@ Here are the packages:
 - scipy
 - pillow (formerly PIL)
 - mongodb, pymongo
+- scikit-image
 
 
 Setup:

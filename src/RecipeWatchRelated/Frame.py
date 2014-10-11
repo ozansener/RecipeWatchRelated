@@ -22,17 +22,12 @@ class Frame:
 				...
 			plt.imshow(f.visualize_masks())
 				...
+			plt.imshow(f.visualize_superpixel())
 	"""
-	datatypes = ['image', 'masks', 'scores', 'segments']
-	loaded = {d:None for d in self.datatypes}
-	paths = {d:None for d in self.datatypes}
-	get_funcs = {
-					'image':lambda path: imread(self.paths['image']) if self.paths['image'] else None,
-					'masks':lambda path: loadmat(self.paths['masks'], variable_names=['masks'])['masks'] if self.paths['image'] else None,
-					'scores':lambda path: loadmat(self.paths['scores'], variable_names=['scores'])['scores'] if self.paths['scores'] else None,
-					'segments':lambda: slic(self.data['image'], n_segments=250, compactness=100) if self.loaded['image'] else None
-				}
-	data = {d:None for d in self.datatypes}
+	datatypes = ['image', 'masks', 'scores', 'superpixels']
+	loaded = {d:None for d in datatypes}
+	paths = {d:None for d in datatypes}
+	data = {d:None for d in datatypes}
 
 
 	def __init__(self, frame_dict):
@@ -45,7 +40,24 @@ class Frame:
 						'masks':frame_dict['masks_and_scores_path'],
 						'scores':frame_dict['masks_and_scores_path']
 					}
+		self.get_funcs = {
+				'image':self.get_image,
+				'masks':self.get_masks,
+				'scores':self.get_scores,
+				'superpixels':self.get_superpixels
+			}
 
+	def get_image(self):
+		return imread(self.paths['image']) if self.paths['image'] else None
+
+	def get_masks(self):
+		return loadmat(self.paths['masks'], variable_names=['masks'])['masks'] if self.paths['masks'] else None
+
+	def get_scores(self):
+		return loadmat(self.paths['scores'], variable_names=['scores'])['scores'] if self.paths['scores'] else None
+
+	def get_superpixels(self):
+		return slic(self.data['image'], n_segments=250, compactness=10) if self.loaded['image'] else None
 
 
 
@@ -60,10 +72,12 @@ class Frame:
 			fills self.data with data of all types named in 'datatypes'
 		"""
 		if type(datatypes) == list:
-			self.get_datatypes(d) for d in datatypes
+			for d in datatypes:
+				self.get_datatypes(d)
+			return
 		datatype = datatypes
 		if not self.loaded[datatype]:
-			self.data[datatype] = self.get_funcs(datatype)
+			self.data[datatype] = self.get_funcs[datatype]()
 		self.loaded[datatype] = True
 
 
@@ -136,25 +150,25 @@ class Frame:
 	####################[ Masks 	]###############################################
 	################################################################################
 
-	def visualize_segment(self, seg_id):
+	def visualize_superpixel(self, seg_id):
 		"""
 			visualizes the ith segment
 			returns the image itself 
 		"""
-		self.get_datatypes(['image', 'segment'])
+		self.get_datatypes(['image', 'superpixels'])
 		img = self.data['image'].copy()
-		img[self.data['segments'] != seg_id] = 0
+		img[self.data['superpixels'] != seg_id] = 0
 		return img
 
 
-	def visualize_segments(self):
+	def visualize_superpixels(self):
 		"""
-			visualizes all segments together on the image 
+			visualizes all superpixels together on the image 
 			returns the image itself
 		"""
-		self.get_datatypes(['image', 'segment'])
+		self.get_datatypes(['image', 'superpixels'])
 		img = self.data['image'].copy()
-		boundaries = find_boundaries(self.data['segments'])
+		boundaries = find_boundaries(self.data['superpixels'])
 		img[boundaries == True] = 0
 		return img
 

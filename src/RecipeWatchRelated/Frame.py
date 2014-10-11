@@ -81,14 +81,11 @@ class Frame:
 		self.loaded[datatype] = True
 
 
-
-	def load(self):
+	def get_all_datatypes(self):
 		"""
 			loads all associated data
 		"""
 		self.get_datatypes(self.datatypes)
-
-
 
 
 
@@ -113,51 +110,37 @@ class Frame:
 		return masked
 
 
+
+
+
+
+	################################################################################
+	####################[ Visualzation 	]###########################################
+	################################################################################
+
 	def visualize_raw(self):
 		"""
-			returns a numpy array with no masks 
-			applied 
+			returns the raw image as numpy array
 		"""
-		if not self.loaded['image']:
-			self.load_datatype('image')
+		self.get_datatypes(['image'])
 		return self.data['image']
 
 
 	def visualize_mask(self, mask_id):
 		"""
-			returns a numpy array with the ith mask
-			applied 
+			visualizes only the 'mask_id'th mask
 		"""
-		if not self.loaded['image']:
-			self.load_datatype('image')
-		if not self.loaded['masks']:
-			self.load_datatype('masks')
+		self.get_datatypes(['image', 'masks'])
 		return self.apply_mask(self.data['image'], self.get_mask(mask_id))
 
 
-	def visualize_masks(self):
+	def visualize_superpixel(self, superpix_id):
 		"""
-			returns a numpy array with all masks labelled
-		"""
-		raise NotImplementedError
-
-
-
-
-
-
-	################################################################################
-	####################[ Masks 	]###############################################
-	################################################################################
-
-	def visualize_superpixel(self, seg_id):
-		"""
-			visualizes the ith segment
-			returns the image itself 
+			visualizes 'superpix_id'th superpixel
 		"""
 		self.get_datatypes(['image', 'superpixels'])
 		img = self.data['image'].copy()
-		img[self.data['superpixels'] != seg_id] = 0
+		img[self.data['superpixels'] != superpix_id] = 0
 		return img
 
 

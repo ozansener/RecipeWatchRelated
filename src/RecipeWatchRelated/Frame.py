@@ -9,7 +9,7 @@ import numpy as np
 import scipy as sp
 from scipy.ndimage import imread
 from scipy.io import loadmat
-from skimage.segmentation import slic
+from skimage.segmentation import slic, find_boundaries
 
 class Frame:
 	"""
@@ -23,12 +23,16 @@ class Frame:
 			plt.imshow(f.visualize_masks())
 				...
 	"""
-	data_types = ['image', 'masks', 'scores', 'segments']
-	load_funcs = {
-					'image':lambda path: imread(path) if path else None,
-					'masks':lambda path: loadmat(path, variable_names=['masks'])['masks'] if path else None,
-					'scores':lambda path: loadmat(path, variable_names=['scores'])['scores'] if path else None,
+	datatypes = ['image', 'masks', 'scores', 'segments']
+	loaded = {d:None for d in self.datatypes}
+	paths = {d:None for d in self.datatypes}
+	get_funcs = {
+					'image':lambda path: imread(self.paths['image']) if self.paths['image'] else None,
+					'masks':lambda path: loadmat(self.paths['masks'], variable_names=['masks'])['masks'] if self.paths['image'] else None,
+					'scores':lambda path: loadmat(self.paths['scores'], variable_names=['scores'])['scores'] if self.paths['scores'] else None,
+					'segments':lambda: slic(self.data['image'], n_segments=250, compactness=100) if self.loaded['image'] else None
 				}
+	data = {d:None for d in self.datatypes}
 
 
 	def __init__(self, frame_dict):
@@ -41,8 +45,6 @@ class Frame:
 						'masks':frame_dict['masks_and_scores_path'],
 						'scores':frame_dict['masks_and_scores_path']
 					}
-		self.loaded = {k:False for k in self.data_types}
-		self.data = {k:None for k in self.data_types}
 
 
 
@@ -53,30 +55,27 @@ class Frame:
 	####################[ Loading 	]###############################################
 	################################################################################
 
-	def load_datatype(self, datatype):
+	def get_datatypes(self, datatypes):
 		"""
-			loads the specified datatype 
+			fills self.data with data of all types named in 'datatypes'
 		"""
+		if type(datatypes) == list:
+			self.get_datatypes(d) for d in datatypes
+		datatype = datatypes
 		if not self.loaded[datatype]:
-			self.data[datatype] = self.load_funcs[datatype](self.paths[datatype])
-			self.loaded[datatype] = True
+			self.data[datatype] = self.get_funcs(datatype)
+		self.loaded[datatype] = True
+
 
 
 	def load(self):
 		"""
 			loads all associated data
 		"""
-		for datatype in self.data_types:
-			self.load_datatype(datatype)
+		self.get_datatypes(self.datatypes)
 
 
 
-	def get_segments(self):
-		"""
-			finds segments 
-		"""
-		# assert self.loaded['image']
-		self.data['segments'] = slic(self.data['image'], n_segments=250, compactness=100)
 
 
 
@@ -129,11 +128,34 @@ class Frame:
 		raise NotImplementedError
 
 
+
+
+
+
+	################################################################################
+	####################[ Masks 	]###############################################
+	################################################################################
+
 	def visualize_segment(self, seg_id):
 		"""
-			visualizes the ith segment 
+			visualizes the ith segment
+			returns the image itself 
 		"""
+		self.get_datatypes(['image', 'segment'])
 		img = self.data['image'].copy()
 		img[self.data['segments'] != seg_id] = 0
 		return img
+
+
+	def visualize_segments(self):
+		"""
+			visualizes all segments together on the image 
+			returns the image itself
+		"""
+		self.get_datatypes(['image', 'segment'])
+		img = self.data['image'].copy()
+		boundaries = find_boundaries(self.data['segments'])
+		img[boundaries == True] = 0
+		return img
+
 

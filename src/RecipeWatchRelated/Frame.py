@@ -9,7 +9,7 @@ import numpy as np
 import scipy as sp
 from scipy.ndimage import imread
 from scipy.io import loadmat
-from skimage.segmentation import slic, find_boundaries
+from skimage.segmentation import slic, find_boundaries, mark_boundaries
 
 class Frame:
 	"""
@@ -150,9 +150,6 @@ class Frame:
 			returns the image itself
 		"""
 		self.get_datatypes(['image', 'superpixels'])
-		img = self.data['image'].copy()
-		boundaries = find_boundaries(self.data['superpixels'])
-		img[boundaries == True] = 0
-		return img
+		return mark_boundaries(self.data['image'], self.data['superpixels'])
 
 

@@ -23,7 +23,6 @@ class Video:
 			print frame
 	"""
 
-
 	def __init__(self, video_dict):
 		"""
 			video_dict = a dictionary containing video data, as contained in 
@@ -47,29 +46,6 @@ class Video:
 		df.sort(inplace=True)
 		df['processed'] = df['masks_and_scores_path'].notnull()
 		return df
-
-
-	def get_data_paths(self):
-		"""
-			sets self.frame_datapaths
-		"""
-		path_list = []
-		for frame_name in self.frame_names:
-			paths = {datatype:os.path.join(d['path'], frame_name + d['ext']) for datatype, d in self.data_dirs.items()}
-			paths['name'] = frame_name
-			path_list.append(paths)
-		self.frame_datapaths = pd.DataFrame(path_list)
-		print self.frame_datapaths.columns
-		self.frame_datapaths['clusters_exist'] = self.frame_datapaths['masks'].apply(os.path.exists)
-		self.frame_datapaths['decoupled'] = self.frame_datapaths['cscores'].apply(os.path.exists)
-
-
-	def get_frames(self):
-		"""
-			sets self.frames to a list of Frame objects with associated data 
-		"""
-		return [Frame(row) for ix, row in self.frame_datapaths.iterrows()] 
-
 
 
 
@@ -101,7 +77,8 @@ class Video:
 		if t > len(self.frames_df) - 1:
 			return None
 		else:
-			return Frame(self.frames_df.loc[t])
+			row = self.frames_df.loc[t]
+			return Frame(image_path=row['image_path'], masks_path=row['masks_and_scores_path'])
 
 
 	def get_random_frame(self):

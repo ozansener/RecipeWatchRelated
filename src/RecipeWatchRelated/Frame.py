@@ -53,6 +53,7 @@ class Frame:
 			self._image = imread(self.image_path)
 		return self._image
 
+
 	@property
 	def masks(self):
 		"""

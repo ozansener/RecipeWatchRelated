@@ -25,16 +25,18 @@ class Frame:
 			plt.imshow(f.visualize_superpixel())
 	"""
 
-	def __init__(self, image_path=None, masks_path=None):
+	def __init__(self, image_path=None, masks_and_scores_path=None):
 		"""
 			given a frame as represented in frame_dict, this will 
 		"""
 		self.image_path = image_path
-		self.masks_path = masks_path
+		self.masks_path = masks_and_scores_path
+		self.scores_path = masks_and_scores_path
 
 		#=====[ Properties	]=====
 		self._image = None
 		self._masks = None
+		self._scores = None
 		self._superpixels = None 
 
 
@@ -63,6 +65,17 @@ class Frame:
 		if self._masks is None and not self.masks_path is None:
 			self._masks = loadmat(self.masks_path, variable_names=['masks'])['masks']
 		return self._masks
+
+
+	@property
+	def scores(self):
+		"""
+			Scores representing the object-ness of the masks 
+			scores[i] = objectness of masks[i]
+		"""
+		if self._scores is None and not self.scores_path is None:
+			self._scores = loadmat(self.scores_path, variable_names=['scores'])['scores']
+		return self._scores
 
 
 	@property
@@ -100,6 +113,23 @@ class Frame:
 		return masked
 
 
+	def top_n_masks(self, n):
+		"""
+			returns the top n masks 
+		"""
+		ordered_ixs = np.argsort(self.scores[:,0])[::-1]
+		return self.masks[:,:,ordered_ixs]
+
+
+	def extract_object(self, mask):
+		"""
+			given a mask representing an object, returns the region 
+			of the image that contains the object 
+		"""
+		nonzero_ixs = np.argwhere(mask)
+		min_x, max_x = np.min(nonzero_ixs[:,0]), np.max(nonzero_ixs[:,0])
+		min_y, max_y = np.min(nonzero_ixs[:,1]), np.max(nonzero_ixs[:,1])		
+		return self.image[min_x:max_x, min_y:max_y, :]
 
 
 

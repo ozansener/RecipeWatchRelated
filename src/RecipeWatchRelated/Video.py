@@ -79,7 +79,7 @@ class Video:
 			return None
 		else:
 			row = self.frames_df.loc[t]
-			return Frame(image_path=row['image_path'], masks_path=row['masks_and_scores_path'])
+			return Frame(image_path=row['image_path'], masks_and_scores_path=row['masks_and_scores_path'])
 
 
 	def get_random_frame(self):

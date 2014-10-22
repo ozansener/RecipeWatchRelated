@@ -115,10 +115,11 @@ class Frame:
 
 	def top_n_masks(self, n):
 		"""
-			returns the top n masks 
+			returns *list* of top n masks as:
+				[(mask_ix, mask) ...]
 		"""
 		ordered_ixs = np.argsort(self.scores[:,0])[::-1]
-		return self.masks[:,:,ordered_ixs[:n]]
+		return [(i, self.get_mask(i)) for i in ordered_ixs[:n]]
 
 
 	def extract_object(self, mask):
@@ -136,8 +137,7 @@ class Frame:
 		"""
 			returns the top n object proposals, cropped 
 		"""
-		top_n_masks = self.top_n_masks(n)
-		return [self.extract_object(top_n_masks[:,:,i]) for i in range(top_n_masks.shape[2])]
+		return [(ix, self.extract_object(m)) for ix, m in self.top_n_masks(n)]
 
 
 

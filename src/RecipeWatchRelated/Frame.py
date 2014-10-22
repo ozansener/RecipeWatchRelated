@@ -122,22 +122,26 @@ class Frame:
 		return [(i, self.get_mask(i)) for i in ordered_ixs[:n]]
 
 
-	def extract_object(self, mask):
+	def crop_object(self, mask, black=False):
 		"""
 			given a mask representing an object, returns the region 
 			of the image that contains the object 
+			setting black to true will crop objects with everything else 
+			blacked out
 		"""
+		img = self.image if not black else self.apply_mask(self.image, mask)
 		nonzero_ixs = np.argwhere(mask)
 		min_x, max_x = np.min(nonzero_ixs[:,0]), np.max(nonzero_ixs[:,0])
 		min_y, max_y = np.min(nonzero_ixs[:,1]), np.max(nonzero_ixs[:,1])		
 		return self.image[min_x:max_x, min_y:max_y, :]
 
 
-	def top_n_cropped_object_proposals(self, n=10):
+	def top_n_cropped_object_proposals(self, n=10, black=False):
 		"""
 			returns the top n object proposals, cropped 
 		"""
-		return [(ix, self.extract_object(m)) for ix, m in self.top_n_masks(n)]
+		return [(ix, self.crop_object(m, black=black)) for ix, m in self.top_n_masks(n)]
+
 
 
 

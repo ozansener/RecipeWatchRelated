@@ -50,6 +50,15 @@ class StorageDelegate:
 		return Video(self.videos.find_one())
 
 
+	def iter_videos(self):
+		"""
+			iterates over all videos 
+		"""
+		cursor = self.db.videos.find()
+		for i in range(cursor.count()):
+			yield Video(cursor.next())
+
+
 	
 
 

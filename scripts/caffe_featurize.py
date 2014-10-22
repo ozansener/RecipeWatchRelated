@@ -33,3 +33,9 @@ jhack@stanford.edu
 ##############
 '''
 from RecipeWatchRelated import *
+
+if __name__ == '__main__':
+
+	cnn = CaffeCNN()
+	sd = StorageDelegate()
+	

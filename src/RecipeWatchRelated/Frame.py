@@ -25,13 +25,14 @@ class Frame:
 			plt.imshow(f.visualize_superpixel())
 	"""
 
-	def __init__(self, image_path=None, masks_and_scores_path=None):
+	def __init__(self, image_path=None, masks_and_scores_path=None, features_path=None):
 		"""
 			given a frame as represented in frame_dict, this will 
 		"""
 		self.image_path = image_path
 		self.masks_path = masks_and_scores_path
 		self.scores_path = masks_and_scores_path
+		self.features_path = features_path
 
 		#=====[ Properties	]=====
 		self._image = None

@@ -18,9 +18,43 @@ class CaffeCNN:
 		if not 'CAFFE_ROOT_PATH' in os.environ.keys():
 			raise Exception("Run configure.sh to set environmental variables! Caffe not found")
 		self.caffe_root = os.environ['CAFFE_ROOT_PATH']
-
 		self.deploy_prototxt_path = os.path.join(self.caffe_root, 'models/bvlc_reference_caffenet/deploy.prototxt')
 		self.model_path = os.path.join(self.caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
-		self.net = caffe.Classifier(self.deploy_prototxt_path, self.model_path)
+		self._cnn = None
+
+
+	@property 
+	def cnn(self):
+		"""
+			property representing the net itself 
+			Allows us to lazily load it.
+		"""
+		if self._cnn is None:
+			self._cnn = caffe.Classifier(self.deploy_prototxt_path, self.model_path)
+			self._cnn.set_phase_test()
+			self._cnn.set_raw_scale('data', 255) #operates on 0-255 scale, not 0-1
+		return self._cnn
+
+
+	def featurize(self, image):
+		"""
+			given an image, returns a feature vector representing the top-level
+			activations of this network
+		"""
+		self.cnn.predict([image])
+		return self.cnn.blobs['fc7'].data[4].flat
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

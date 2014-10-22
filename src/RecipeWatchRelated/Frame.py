@@ -133,7 +133,7 @@ class Frame:
 		nonzero_ixs = np.argwhere(mask)
 		min_x, max_x = np.min(nonzero_ixs[:,0]), np.max(nonzero_ixs[:,0])
 		min_y, max_y = np.min(nonzero_ixs[:,1]), np.max(nonzero_ixs[:,1])		
-		return self.image[min_x:max_x, min_y:max_y, :]
+		return img[min_x:max_x, min_y:max_y, :]
 
 
 	def top_n_cropped_object_proposals(self, n=10, black=False):

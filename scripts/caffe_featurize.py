@@ -38,4 +38,8 @@ if __name__ == '__main__':
 
 	cnn = CaffeCNN()
 	sd = StorageDelegate()
-	
+	for video in sd.iter_videos():
+		print video
+		for frame in video.iter_frames():
+			objs = top_n_cropped_object_proposals(n=25, )
+

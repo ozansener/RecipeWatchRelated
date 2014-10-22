@@ -96,7 +96,7 @@ class Video:
 			iterates over all frames and *loads* them
 		"""
 		for ix, row in self.frames_df.iterrows():
-			return self.get_frame(ix)
+			yield self.get_frame(ix)
 
 
 

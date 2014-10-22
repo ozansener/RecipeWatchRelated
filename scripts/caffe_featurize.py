@@ -41,5 +41,10 @@ if __name__ == '__main__':
 	for video in sd.iter_videos():
 		print video
 		for frame in video.iter_frames():
-			objs = top_n_cropped_object_proposals(n=25, )
+			ixs, objs = zip(*frame.top_n_cropped_object_proposals(n=25, black=False))
+			features = [cnn.featurize(obj) for obj in objs]
+			break
+		break
+
+
 

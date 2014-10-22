@@ -42,7 +42,7 @@ class CaffeCNN:
 			activations of this network
 		"""
 		self.cnn.predict([image])
-		return self.cnn.blobs['fc7'].data[4].flat
+		return self.cnn.blobs['fc7'].data[4].flatten()
 
 
 

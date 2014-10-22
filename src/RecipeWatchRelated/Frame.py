@@ -118,7 +118,7 @@ class Frame:
 			returns the top n masks 
 		"""
 		ordered_ixs = np.argsort(self.scores[:,0])[::-1]
-		return self.masks[:,:,ordered_ixs]
+		return self.masks[:,:,ordered_ixs[:n]]
 
 
 	def extract_object(self, mask):
@@ -131,6 +131,13 @@ class Frame:
 		min_y, max_y = np.min(nonzero_ixs[:,1]), np.max(nonzero_ixs[:,1])		
 		return self.image[min_x:max_x, min_y:max_y, :]
 
+
+	def top_n_cropped_object_proposals(self, n=10):
+		"""
+			returns the top n object proposals, cropped 
+		"""
+		top_n_masks = self.top_n_masks(n)
+		return [self.extract_object(top_n_masks[:,:,i]) for i in range(top_n_masks.shape[2])]
 
 
 

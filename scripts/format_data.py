@@ -69,8 +69,6 @@ from pprint import pprint
 from scipy.io import loadmat
 import numpy as np
 
-from RecipeWatchRelated.SparseTensor import SparseTensor
-
 def listdir_fullpath(d):
     return [os.path.join(d, f) for f in os.listdir(d)]
 

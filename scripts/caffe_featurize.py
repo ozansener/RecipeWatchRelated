@@ -44,7 +44,9 @@ if __name__ == '__main__':
 		print video
 		for ix, frame in enumerate(video.iter_frames()):
 			print "---> Featurizing frame #: %d" % ix
-			frame.features = net.featurize_frame(frame)
+			if frame.features is None and not frame.masks is None:
+				frame.features = net.featurize_frame(frame)
+
 
 
 

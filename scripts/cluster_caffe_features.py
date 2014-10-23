@@ -34,5 +34,5 @@ if __name__ == '__main__':
 	print '---> Starting KMeans'
 	km = KMeans(n_clusters=25, verbose=1, n_jobs=1)
 	print '---> Fitting KMeans'
-	centroids = km.fit_predict(X)
-	np.save(os.path.join(data_dir, 'centroids_2_videos'), centroids)
+	cluster_ids = km.fit_predict(X)
+	np.save(os.path.join(data_dir, 'cluster_ids'), cluster_ids)

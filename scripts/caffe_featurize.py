@@ -28,7 +28,8 @@ if __name__ == '__main__':
 	net.cnn #loads it for us.
 
 	sd = StorageDelegate()
-	for video in sd.iter_videos():
+	for video in sd.iter_videos():		
+		print video
 		for frame in video.iter_frames():
 			print "---> Featurizing frame #: %d" % frame.index
 			if frame.features is None and not frame.masks is None:

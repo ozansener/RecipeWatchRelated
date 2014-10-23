@@ -37,6 +37,7 @@ class Frame(object):
 		"""
 		self.index = index 
 
+		self.root_dir = root_dir
 		self.image_path = os.path.join(root_dir, self.image_filename)
 		self.masks_path = os.path.join(root_dir, self.masks_filename)
 		self.scores_path = os.path.join(root_dir, self.scores_filename)

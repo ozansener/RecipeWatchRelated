@@ -17,7 +17,7 @@ Usage:
 
 	i.e.
 
-	python format_data.py 	-i ~/data/robobrain/recipewatch/data \
+	python make_mongod_database.py 	-i ~/data/robobrain/recipewatch/data
 
 
 Args:

@@ -34,7 +34,7 @@ if __name__ == '__main__':
 	frame_ids = []
 	mask_ids = []
 
-	for video in islice(sd.iter_videos(verbose=True), 2):
+	for video in sd.iter_videos(verbose=True):
 		for f in video.iter_frames(verbose=True):
 			if not f.features is None:
 				feature_vecs += f.features.values()

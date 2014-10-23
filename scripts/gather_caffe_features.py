@@ -22,8 +22,9 @@ Fall 2014
 jhack@stanford.edu
 ##############
 '''
-from RecipeWatchRelated import *
+import numpy as np
 from itertools import islice
+from RecipeWatchRelated import *
 
 if __name__ == '__main__':
 
@@ -35,15 +36,18 @@ if __name__ == '__main__':
 	mask_ids = []
 
 	for video in sd.iter_videos(verbose=True):
-		for f in video.iter_frames(verbose=True):
-			if not f.features is None:
-				feature_vecs += f.features.values()
-				video_ids += [video.name]*len(f.features.keys())
-				frame_ids += [f.index]*len(f.features.keys())
-				mask_ids += f.features.keys()
+		for ix, f in enumerate(video.iter_frames(verbose=True)):
+			if ix % 25 == 0:
+				if not f.features is None:
+					feature_vecs += f.features.values()
+					video_ids += [video.name]*len(f.features.keys())
+					frame_ids += [f.index]*len(f.features.keys())
+					mask_ids += f.features.keys()
 
-	feature_vecs = np.matrix(feature_vecs)
-	video_ids = np.array(video_ids)
-	frame_ids = np.array(frame_ids)
-	mask_ids = np.array(mask_ids)
+	print '=====[ ...SAVING... ]====='
+	np.save('./data/feature_vecs', np.matrix(feature_vecs))
+	np.save('./data/video_ids', np.array(video_ids))
+	np.save('./data/frame_ids', np.array(frame_ids))
+	np.save('./data/mask_ids', np.array(mask_ids))
+	
 

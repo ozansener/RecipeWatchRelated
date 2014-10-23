@@ -50,13 +50,16 @@ class StorageDelegate:
 		return Video(self.videos.find_one())
 
 
-	def iter_videos(self):
+	def iter_videos(self, verbose=False):
 		"""
 			iterates over all videos 
 		"""
 		cursor = self.db.videos.find()
 		for i in range(cursor.count()):
-			yield Video(cursor.next())
+			v = Video(cursor.next())
+			if verbose:
+				print v
+			yield v
 
 
 	def iter_frames(self, verbose=False):
@@ -64,12 +67,8 @@ class StorageDelegate:
 			iterates over all frames
 			verbose mode prints out the video names as well
 		"""
-		for v in self.iter_videos():
-			if verbose:
-				print v
-			for f in v.iter_frames():
-				if verbose:
-					print '	',	f
+		for v in self.iter_videos(verbose=verbose):
+			for f in v.iter_frames(verbose=verbose):
 				yield f
 
 

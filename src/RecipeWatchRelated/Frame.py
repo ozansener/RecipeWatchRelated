@@ -104,7 +104,7 @@ class Frame(object):
 		"""
 			Features describing each mask
 		"""
-		if self._features is None and os.path.exists(self.features_path):
+		if self._features is None and self.is_featurized():
 			self._features = cPickle.load(open(self.features_path, 'r'))
 		return self._features
 	@features.setter
@@ -113,9 +113,12 @@ class Frame(object):
 			Sets and saves features
 		"""
 		self._features = value
-		print "		saving: %s ... ", self.features_path, 
 		cPickle.dump(self.features, open(self.features_path,'w'))
-		print 'Done'
+	def is_featurized(self):
+		"""
+			returns true if the features already exist 
+		"""
+		return os.path.exists(self.features_path)
 
 	
 

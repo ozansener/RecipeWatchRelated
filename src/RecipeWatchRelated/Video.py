@@ -44,6 +44,24 @@ class Video:
 
 
 
+	################################################################################
+	####################[ Properties	]###########################################
+	################################################################################
+
+	# @property
+	# def frames_featurized(self):
+	# 	"""
+	# 		represents wether all contained frames have been
+	# 		featurized
+	# 	"""
+	# 	if self._frames_featurized is None:
+	# 		self._frames_featurized = all([]) #LEFT OFF HERE
+	#     return self._frames_featurized
+	# @frames_featurized.setter
+	# def frames_featurized(self, value):
+	#     self._frames_featurized = value
+	
+
 
 	################################################################################
 	####################[ Frame Data	]###########################################
@@ -99,10 +117,13 @@ class Video:
 		return self.get_frame(random.choice(processed_df['_id']))
 
 
-	def iter_frames(self):
+	def iter_frames(self, verbose=False):
 		"""
 			iterates over all frames and *loads* them
 		"""
 		for i in range(1, len(self.frames_df)+1):
-			yield self.get_frame(i)
+			f = self.get_frame(i)
+			if verbose:
+				print '	', f
+			yield f
 

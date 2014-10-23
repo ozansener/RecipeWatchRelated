@@ -23,10 +23,27 @@ jhack@stanford.edu
 ##############
 '''
 from RecipeWatchRelated import *
+from itertools import islice
 
 if __name__ == '__main__':
 
 	sd = StorageDelegate()
-	for video in sd.iter_videos():
-		for frame in video.iter_frames():
-			
+
+	feature_vecs = []
+	video_ids = []	
+	frame_ids = []
+	mask_ids = []
+
+	for video in islice(sd.iter_videos(verbose=True), 2):
+		for f in video.iter_frames(verbose=True):
+			if not f.features is None:
+				feature_vecs += f.features.values()
+				video_ids += [video.name]*len(f.features.keys())
+				frame_ids += [f.index]*len(f.features.keys())
+				mask_ids += f.features.keys()
+
+	feature_vecs = np.matrix(feature_vecs)
+	video_ids = np.array(video_ids)
+	frame_ids = np.array(frame_ids)
+	mask_ids = np.array(mask_ids)
+

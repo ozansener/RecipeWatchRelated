@@ -25,16 +25,12 @@ from RecipeWatchRelated import *
 if __name__ == '__main__':
 
 	net = CaffeCNN()
-	net.cnn #loads it for us.
+	net.cnn # CaffeCNN lazily loads the cnn.
 
 	sd = StorageDelegate()
-	for video in sd.iter_videos():		
-		print video
-		for frame in video.iter_frames():
-			print "---> Featurizing frame #: %d" % frame.index
-			if frame.features is None and not frame.masks is None:
-				frame.features = net.featurize_frame(frame)
-
+	for frame in sd.iter_frames(verbose=True):
+		if frame.features is None and not frame.masks is None:
+			frame.features = net.featurize_frame(frame)
 
 
 

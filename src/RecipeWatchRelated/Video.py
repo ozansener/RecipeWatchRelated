@@ -23,6 +23,13 @@ class Video:
 			frame_xxx = video.get_random_frame()
 			print frame
 	"""
+	def __str__(self):
+		return """
+=====[ Video: %s ]=====
+# Frames: %d
+# Processed Frames: %d
+""" % (self.name, self.get_num_frames(), self.get_num_processed_frames())
+
 
 	def __init__(self, video_dict):
 		"""
@@ -36,6 +43,12 @@ class Video:
 		self.frames_df = self.get_frames_df(video_dict['frames'])
 
 
+
+
+	################################################################################
+	####################[ Frame Data	]###########################################
+	################################################################################
+
 	def get_frames_df(self, frames_list):
 		"""
 			returns a dataframe containing sorted frames and paths to their respective 
@@ -48,11 +61,6 @@ class Video:
 		df['processed'] = df['masks_and_scores_path'].notnull()
 		return df
 
-
-
-	################################################################################
-	####################[ Frame Data	]###########################################
-	################################################################################
 
 	def get_num_frames(self):
 		"""
@@ -97,27 +105,4 @@ class Video:
 		"""
 		for i in range(1, len(self.frames_df)+1):
 			yield self.get_frame(i)
-
-
-
-
-
-	################################################################################
-	####################[ Interface 	]###########################################
-	################################################################################
-
-	def __str__(self):
-		"""
-			prints out stats on contained frames
-		"""
-		return """
-=====[ Video: %s ]=====
-# Frames: %d
-# Processed Frames: %d
-""" % (self.name, self.get_num_frames(), self.get_num_processed_frames())
-
-
-
-
-
 

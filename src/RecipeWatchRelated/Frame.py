@@ -25,6 +25,10 @@ class Frame(object):
 				...
 			plt.imshow(f.visualize_superpixel())
 	"""
+
+	def __str__(self):
+		return """Frame: %d""" % self.index
+	
 	image_filename = 'image.jpg'
 	masks_filename = 'masks_and_scores.mat'
 	scores_filename = 'masks_and_scores.mat'
@@ -49,6 +53,12 @@ class Frame(object):
 		self._scores = None
 		self._features = None
 		self._superpixels = None 
+
+
+
+
+
+
 
 
 
@@ -124,6 +134,10 @@ class Frame(object):
 
 
 
+
+
+
+
 	################################################################################
 	####################[ Masks 	]###############################################
 	################################################################################
@@ -176,6 +190,12 @@ class Frame(object):
 
 
 
+
+
+
+
+
+
 	################################################################################
 	####################[ Visualzation 	]###########################################
 	################################################################################
@@ -209,5 +229,9 @@ class Frame(object):
 			returns the image itself
 		"""
 		return mark_boundaries(self.image, self.superpixels)
+
+
+
+
 
 

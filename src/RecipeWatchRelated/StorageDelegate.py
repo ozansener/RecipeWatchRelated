@@ -59,7 +59,18 @@ class StorageDelegate:
 			yield Video(cursor.next())
 
 
-	
+	def iter_frames(self, verbose=False):
+		"""
+			iterates over all frames
+			verbose mode prints out the video names as well
+		"""
+		for v in self.iter_videos():
+			if verbose:
+				print v
+			for f in v.iter_frames():
+				if verbose:
+					print '	',	f
+				yield f
 
 
 

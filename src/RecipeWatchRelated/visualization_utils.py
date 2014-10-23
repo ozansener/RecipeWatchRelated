@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from RecipeWatchRelated import *
 
-def load_data(data_dir):
+def load_cluster_data(data_dir):
 	"""
 		returns a dataframe with columns:
 			- cluster_id
@@ -32,7 +32,7 @@ def sample_cluster(df, cluster_id, samples=9):
 	return df.ix[random_ixs]
 
 
-def visualize_sample(sd, df, cluster_id):
+def visualize_cluster_sample(sd, df, cluster_id):
 	"""
 		plots a sample of object proposals in a given 
 		cluster 
@@ -57,9 +57,9 @@ def visualize_sample(sd, df, cluster_id):
 if __name__ == '__main__':
 
 	sd = StorageDelegate()
-	df = load_data('./data')
+	df = load_cluster_data('./data')
 
-	visualize_sample(sd, df, 1)
+	visualize_cluster_sample(sd, df, 1)
 
 
 

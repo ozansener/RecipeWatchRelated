@@ -75,7 +75,7 @@ class Video:
 			returns None if t is too large. 
 			Note: t is 1-indexed
 		"""
-		if t > len(self.frames_df) - 1:
+		if t > len(self.frames_df):
 			return None
 		else:
 			row = self.frames_df.loc[t]
@@ -95,8 +95,8 @@ class Video:
 		"""
 			iterates over all frames and *loads* them
 		"""
-		for ix, row in self.frames_df.iterrows():
-			yield self.get_frame(ix)
+		for i in range(1, len(self.frames_df)+1):
+			yield self.get_frame(i)
 
 
 

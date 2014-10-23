@@ -9,6 +9,7 @@ import numpy as np
 import scipy as sp
 import caffe
 
+
 class CaffeCNN:
 
 	def __init__(self):
@@ -43,6 +44,15 @@ class CaffeCNN:
 		"""
 		self.cnn.predict([image])
 		return self.cnn.blobs['fc7'].data[4].flatten()
+
+
+	def featurize_frame(self, frame, n=50, black=False):
+		"""
+			given a frame, returns a mapping:
+				features: mask_ix -> feature_array 
+		"""
+		proposals = frame.top_n_cropped_object_proposals(n=25, black=False)
+		return {ix:self.featurize(obj) for ix, obj in proposals} 
 
 
 

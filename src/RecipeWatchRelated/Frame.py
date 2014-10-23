@@ -5,13 +5,14 @@
 # (includes masks, etc.)
 ####################
 import os
+import cPickle
 import numpy as np
 import scipy as sp
 from scipy.ndimage import imread
 from scipy.io import loadmat
 from skimage.segmentation import slic, find_boundaries, mark_boundaries
 
-class Frame:
+class Frame(object):
 	"""
 		Ideal Usage:
 		------------
@@ -24,20 +25,28 @@ class Frame:
 				...
 			plt.imshow(f.visualize_superpixel())
 	"""
+	image_filename = 'image.jpg'
+	masks_filename = 'masks_and_scores.mat'
+	scores_filename = 'masks_and_scores.mat'
+	features_filename = 'features.npy'
 
-	def __init__(self, image_path=None, masks_and_scores_path=None, features_path=None):
+
+	def __init__(self, index, root_dir):
 		"""
 			given a frame as represented in frame_dict, this will 
 		"""
-		self.image_path = image_path
-		self.masks_path = masks_and_scores_path
-		self.scores_path = masks_and_scores_path
-		self.features_path = features_path
+		self.index = index 
+
+		self.image_path = os.path.join(root_dir, self.image_filename)
+		self.masks_path = os.path.join(root_dir, self.masks_filename)
+		self.scores_path = os.path.join(root_dir, self.scores_filename)
+		self.features_path = os.path.join(root_dir, self.features_filename)
 
 		#=====[ Properties	]=====
 		self._image = None
 		self._masks = None
 		self._scores = None
+		self._features = None
 		self._superpixels = None 
 
 
@@ -52,7 +61,7 @@ class Frame:
 			Original image 
 			Type: Numpy array, 2d
 		"""
-		if self._image is None and not self.image_path is None:
+		if self._image is None and os.path.exists(self.image_path):
 			self._image = imread(self.image_path)
 		return self._image
 
@@ -63,7 +72,7 @@ class Frame:
 			Masks representing object proposals 
 			Type: Numpy array, 3d (3rd dimension indexes the objects)
 		"""
-		if self._masks is None and not self.masks_path is None:
+		if self._masks is None and os.path.exists(self.masks_path):
 			self._masks = loadmat(self.masks_path, variable_names=['masks'])['masks']
 		return self._masks
 
@@ -74,10 +83,30 @@ class Frame:
 			Scores representing the object-ness of the masks 
 			scores[i] = objectness of masks[i]
 		"""
-		if self._scores is None and not self.scores_path is None:
+		if self._scores is None and os.path.exists(self.scores_path):
 			self._scores = loadmat(self.scores_path, variable_names=['scores'])['scores']
 		return self._scores
+	
 
+	@property
+	def features(self):
+		"""
+			Features describing each mask
+		"""
+		if self._features is None and os.path.exists(self.features_path):
+			self._features = cPickle.load(open(self.features_path, 'r'))
+		return self._features
+	@features.setter
+	def features(self, value):
+		"""
+			Sets and saves features
+		"""
+		self._features = value
+		print "		saving: %s ... ", self.features_path, 
+		cPickle.dump(self.features, open(self.features_path,'w'))
+		print 'Done'
+
+	
 
 	@property
 	def superpixels(self):

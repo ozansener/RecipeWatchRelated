@@ -36,15 +36,16 @@ from RecipeWatchRelated import *
 
 if __name__ == '__main__':
 
-	cnn = CaffeCNN()
+	net = CaffeCNN()
+	net.cnn
+
 	sd = StorageDelegate()
 	for video in sd.iter_videos():
 		print video
-		for frame in video.iter_frames():
-			ixs, objs = zip(*frame.top_n_cropped_object_proposals(n=25, black=False))
-			features = [cnn.featurize(obj) for obj in objs]
-			break
-		break
+		for ix, frame in enumerate(video.iter_frames()):
+			print "---> Featurizing frame #: %d" % ix
+			frame.features = net.featurize_frame(frame)
+
 
 
 

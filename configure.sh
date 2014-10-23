@@ -1,6 +1,6 @@
 export PROJECT_DIR=`pwd`
+export JAY_DATA_PATH=`pwd`/data
 export MONGODB_DBPATH=`pwd`/data/db
-export JAY_DATA_PATH=/Volumes/DeepStorage/Data/Robobrain/data
 export PYTHONPATH=$PYTHONPATH:`pwd`/src/
 
 #===[ Add Caffe to Path ]===

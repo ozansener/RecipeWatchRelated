@@ -79,7 +79,6 @@ def configure_mongodb(dbpath, schema_file):
 							'image':os.path.join(frames_dir, frame_name, 'image.jpg'),
 							'masks':os.path.join(frames_dir, frame_name, 'masks_and_scores.mat'),
 							'scores':os.path.join(frames_dir, frame_name, 'masks_and_scores.mat'),
-							'cnn_features':os.path.join(frames_dir, frame_name, 'features.npy')
 			}
 			frame_data = {k:v for k,v in paths.items() if os.path.exists(v)}
 			client.insert(Frame, frame_name, frame_data, parent=video, method='cp')

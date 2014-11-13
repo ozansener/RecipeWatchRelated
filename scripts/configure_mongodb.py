@@ -74,11 +74,14 @@ def configure_mongodb(dbpath, schema_file):
 		frames_dir = os.path.join(video.root, 'Frame')
 		for frame_name in [d for d in os.listdir(frames_dir) if not d.startswith('.')]:
 
-			frame_data = {
+			#=====[ Only insert	]=====
+			paths = {
 							'image':os.path.join(frames_dir, frame_name, 'image.jpg'),
 							'masks':os.path.join(frames_dir, frame_name, 'masks_and_scores.mat'),
 							'scores':os.path.join(frames_dir, frame_name, 'masks_and_scores.mat'),
+							'cnn_features':os.path.join(frames_dir, frame_name, 'features.npy')
 			}
+			frame_data = {k:v for k,v in paths.items() if os.path.exists(v)}
 			client.insert(Frame, frame_name, frame_data, parent=video, method='cp')
 
 

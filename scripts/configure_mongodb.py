@@ -52,6 +52,7 @@ def configure_mongodb(dbpath, schema_file):
 		Configures/initializes the mongodb database
 	"""
 	#=====[ Step 0: create client with new Schema	]=====
+	print schema_file
 	schema = __import__(schema_file).Schema
 	client = ModalClient(root=dbpath, schema=schema)
 
@@ -74,12 +75,15 @@ def configure_mongodb(dbpath, schema_file):
 		for frame_name in [d for d in os.listdir(frames_dir) if not d.startswith('.')]:
 
 			frame_data = {
-							'image':os.path.join(frames_dir, frame_name, 'image.png'),
+							'image':os.path.join(frames_dir, frame_name, 'image.jpg'),
 							'masks':os.path.join(frames_dir, frame_name, 'masks_and_scores.mat'),
 							'scores':os.path.join(frames_dir, frame_name, 'masks_and_scores.mat'),
-							'cnn_features':os.path.join(frames_dir, frame_name, 'features.npy')
 			}
 			client.insert(Frame, frame_name, frame_data, parent=video, method='cp')
+
+
+	#=====[ Step 3: save schema for future use	]=====
+	client.save_schema()
 
 
 if __name__ == '__main__':

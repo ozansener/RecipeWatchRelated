@@ -1,7 +1,7 @@
 export PROJECT_DIR=`pwd`
 export DATA_DIR=`pwd`/data
 export MONGODB_DBPATH=`pwd`/data/db
-export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/src/
+export PYTHONPATH=$PYTHONPATH:`pwd`
 
 #===[ Add Caffe to Path ]===
 export CAFFE_ROOT_DIR=/Users/jayhack/CS/CV/caffe

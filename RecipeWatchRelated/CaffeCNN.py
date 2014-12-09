@@ -16,9 +16,9 @@ class CaffeCNN:
 		"""
 			loads the network 
 		"""
-		if not 'CAFFE_ROOT_PATH' in os.environ.keys():
+		if not 'CAFFE_ROOT_DIR' in os.environ.keys():
 			raise Exception("Run configure.sh to set environmental variables! Caffe not found")
-		self.caffe_root = os.environ['CAFFE_ROOT_PATH']
+		self.caffe_root = os.environ['CAFFE_ROOT_DIR']
 		self.deploy_prototxt_path = os.path.join(self.caffe_root, 'models/bvlc_reference_caffenet/deploy.prototxt')
 		self.model_path = os.path.join(self.caffe_root, 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel')
 		self._cnn = None

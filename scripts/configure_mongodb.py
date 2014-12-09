@@ -52,7 +52,6 @@ def configure_mongodb(dbpath, schema_file):
 		Configures/initializes the mongodb database
 	"""
 	#=====[ Step 0: create client with new Schema	]=====
-	print schema_file
 	schema = __import__(schema_file).Schema
 	client = ModalClient(root=dbpath, schema=schema)
 

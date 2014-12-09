@@ -51,7 +51,7 @@ Schema = {
 		'cnn_features':	{
 						'mode':'disk',
 						'filename':'features.npy',
-						'load_func':lambda p: cPickle.load(p),
+						'load_func':lambda p: cPickle.load(open(p)),
 						'save_func':lambda x, p: cPickle.dump(x, open(p, 'w'))
 					}
 	},
